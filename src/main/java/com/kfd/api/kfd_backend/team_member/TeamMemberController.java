@@ -3,6 +3,8 @@ package com.kfd.api.kfd_backend.team_member;
 import java.util.List;
 import java.util.UUID;
 
+import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
+import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,27 +43,37 @@ public class TeamMemberController {
 
     // Create new member
     @PostMapping
-    public ResponseEntity<TeamMember> createMember(@RequestBody TeamMemberDto dto) {
+    public ResponseEntity<ApiDataResponse<TeamMember>> createMember(@RequestBody TeamMemberDto dto) {
         // Placeholder admin ID — will be replaced by real auth later
         UUID mockAdminId = UUID.fromString("d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80");
         TeamMember created = teamMemberService.createMember(dto, mockAdminId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        ApiDataResponse<TeamMember> response = new ApiDataResponse<>(
+                HttpStatus.CREATED.value(),
+                String.format("Team member '%s %s' was successfully created.", created.getFirstName(), created.getLastName()),
+                created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Update existing member
     @PutMapping("/{id}")
-    public ResponseEntity<TeamMember> updateMember(@PathVariable UUID id,
+    public ResponseEntity<ApiDataResponse<TeamMember>> updateMember(@PathVariable UUID id,
             @RequestBody TeamMemberDto dto) {
         UUID mockAdminId = UUID.fromString("d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80");
         TeamMember updated = teamMemberService.updateMember(id, dto, mockAdminId);
-        return ResponseEntity.ok(updated);
+        ApiDataResponse<TeamMember> response = new ApiDataResponse<>(
+                HttpStatus.OK.value(),
+                String.format("Team member '%s %s' was successfully updated.", updated.getFirstName(), updated.getLastName()),
+                updated);
+        return ResponseEntity.ok(response);
     }
 
     // Delete a member
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMember(@PathVariable UUID id) {
+    public ResponseEntity<ApiMessageResponse> deleteMember(@PathVariable UUID id) {
         teamMemberService.deleteMember(id);
-        return ResponseEntity.noContent().build();
+        ApiMessageResponse response = new ApiMessageResponse(
+                HttpStatus.OK.value(),
+                String.format("Team member with ID '%s' was successfully deleted.", id));
+        return ResponseEntity.ok(response);
     }
-
 }
