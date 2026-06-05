@@ -15,11 +15,12 @@ public class TeamMemberDto {
     private UUID id;
     private String firstName;
     private String lastName;
-    private String title; // JSON string: {"en": "Executive Director"} from now
+    private String title;       // JSON string: {"en": "Executive Director"} from now
     private String department;
-    private String bio; // JSON string: {"en": "Bio text here..."} from now
+    private String bio;         // JSON string: {"en": "Bio text here..."} from now
     private String headshotUrl;
     private Integer displayOrder;
     private Boolean isActive;
+
 
 }
