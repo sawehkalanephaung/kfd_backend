@@ -1,5 +1,6 @@
 package com.kfd.api.kfd_backend.faq;
 
+import com.kfd.api.kfd_backend.global.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class FaqService {
     // Get by ID
     public Faq getFaqById(UUID id) {
         return faqRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("FAQ not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("FAQ", "id", id));
     }
 
     @Transactional
