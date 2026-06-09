@@ -46,6 +46,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles ResourceInUseException → HTTP 409 Conflict
+     */
+    @ExceptionHandler(ResourceInUseException.class)
+    public ResponseEntity<ApiErrorResponse> handleResourceInUse(ResourceInUseException ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.CONFLICT.value(),     // 409
+                "Conflict",
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    /**
      * Handles invalid path variable types → HTTP 400 Bad Request
      * Triggered when: a non-UUID string is passed as a UUID path variable.
      * Example: GET /api/faqs/not-a-valid-uuid → 400

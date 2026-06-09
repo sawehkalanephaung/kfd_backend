@@ -1,17 +1,22 @@
 package com.kfd.api.kfd_backend.cms.tag;
 
+import com.kfd.api.kfd_backend.cms.post.PostRepository;
 import com.kfd.api.kfd_backend.global.exception.DuplicateResourceException;
+import com.kfd.api.kfd_backend.global.exception.ResourceInUseException;
+import com.kfd.api.kfd_backend.global.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class TagService {
 
     private final TagRepository tagRepository;
+    private final PostRepository postRepository;
 
     private TagDto toDto(Tag tag) {
         return TagDto.builder()
@@ -40,5 +45,16 @@ public class TagService {
                         .build()
         );
         return toDto(saved);
+    }
+
+    @Transactional
+    public void deleteTag(UUID id) {
+        if (!tagRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Tag", "id", id);
+        }
+        if (postRepository.existsByTagId(id)) {
+            throw new ResourceInUseException("Tag", "posts");
+        }
+        tagRepository.deleteById(id);
     }
 }
