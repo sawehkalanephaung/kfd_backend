@@ -1,6 +1,8 @@
 package com.kfd.api.kfd_backend.cms.category;
 
+import com.kfd.api.kfd_backend.cms.post.PostRepository;
 import com.kfd.api.kfd_backend.global.exception.DuplicateResourceException;
+import com.kfd.api.kfd_backend.global.exception.ResourceInUseException;
 import com.kfd.api.kfd_backend.global.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.UUID;
 public class PostCategoryService {
 
     private final PostCategoryRepository categoryRepository;
+    private final PostRepository postRepository;
 
     // ── Helpers ──────────────────────────────────────────────
 
@@ -38,6 +41,10 @@ public class PostCategoryService {
                 .stream()
                 .map(this::toDto)
                 .toList();
+    }
+
+    public PostCategoryDto getCategoryById(UUID id) {
+        return toDto(findOrThrow(id));
     }
 
     @Transactional
@@ -72,9 +79,12 @@ public class PostCategoryService {
 
     @Transactional
     public void deleteCategory(UUID id) {
-        // Throws 404 if not found; FK violation (posts reference it) bubbles up
-        // as DataIntegrityViolationException → caught by GlobalExceptionHandler → 409
-        PostCategory category = findOrThrow(id);
-        categoryRepository.delete(category);
+        if (!categoryRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Category", "id", id);
+        }
+        if (postRepository.existsByCategoryId(id)) {
+            throw new ResourceInUseException("Category", "posts");
+        }
+        categoryRepository.deleteById(id);
     }
 }

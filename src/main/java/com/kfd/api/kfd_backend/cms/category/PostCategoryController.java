@@ -21,7 +21,16 @@ public class PostCategoryController {
     public ResponseEntity<List<PostCategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
-
+    // Get category by id
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiDataResponse<PostCategoryDto>> getCategoryById(@PathVariable UUID id) {
+        PostCategoryDto category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(
+                new ApiDataResponse<>(
+                        HttpStatus.OK.value(),
+                        "Category retrieved successfully",
+                        category));
+    }
     @PostMapping
     public ResponseEntity<ApiDataResponse<PostCategoryDto>> createCategory(@RequestBody PostCategoryDto dto) {
         PostCategoryDto created = categoryService.createCategory(dto);

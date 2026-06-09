@@ -15,4 +15,7 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
     @Query("SELECT COUNT(p) > 0 FROM Post p JOIN p.tags t WHERE t.id = :tagId")
     boolean existsByTagId(@Param("tagId") UUID tagId);
+
+    @Query("SELECT COUNT(p) > 0 FROM Post p WHERE p.category.id = :categoryId")
+    boolean existsByCategoryId(@Param("categoryId") UUID categoryId);
 }
