@@ -93,11 +93,56 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles MaxUploadSizeExceededException → HTTP 413 Payload Too Large
+     */
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiErrorResponse> handleMaxSizeException(org.springframework.web.multipart.MaxUploadSizeExceededException ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.PAYLOAD_TOO_LARGE.value(), // 413
+                "Payload Too Large",
+                "File size exceeds the configured limit of 5MB."
+        );
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(body);
+    }
+
+    /**
+     * Handles StorageException → HTTP 500 Internal Server Error
+     */
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<ApiErrorResponse> handleStorageException(StorageException ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(), // 500
+                "Storage Error",
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+
+    /**
+     * Handles MissingServletRequestParameterException and MissingServletRequestPartException → HTTP 400 Bad Request
+     */
+    @ExceptionHandler({
+        org.springframework.web.bind.MissingServletRequestParameterException.class,
+        org.springframework.web.multipart.support.MissingServletRequestPartException.class
+    })
+    public ResponseEntity<ApiErrorResponse> handleMissingParams(Exception ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(), // 400
+                "Bad Request",
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    /**
      * Fallback handler for any unexpected exception → HTTP 500 Internal Server Error
      * Prevents leaking internal stack traces to the API consumer.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex) {
+        // Log the actual exception for debugging
+        ex.printStackTrace();
+        
         ApiErrorResponse body = new ApiErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(), // 500
                 "Internal Server Error",
