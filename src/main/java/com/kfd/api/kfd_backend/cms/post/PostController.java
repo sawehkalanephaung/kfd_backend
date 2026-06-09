@@ -69,14 +69,15 @@ public class PostController {
 
     /**
      * DELETE /api/v1/admin/cms/posts/{id}
-     * Soft-deletes by setting status to ARCHIVED. The record is preserved in the DB.
+     * Soft-deletes a post by setting status to ARCHIVED.
+     * If the post is already ARCHIVED, permanently hard-deletes it.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiMessageResponse> archivePost(@PathVariable UUID id) {
-        postService.archivePost(id);
-        return ResponseEntity.ok(
-                new ApiMessageResponse(
-                        HttpStatus.OK.value(),
-                        String.format("Post with ID '%s' was successfully archived.", id)));
+    public ResponseEntity<ApiMessageResponse> deleteOrArchivePost(@PathVariable UUID id) {
+        boolean isPermanentlyDeleted = postService.deleteOrArchivePost(id);
+        String message = isPermanentlyDeleted
+                ? String.format("Post with ID '%s' was permanently deleted.", id)
+                : String.format("Post with ID '%s' was successfully archived.", id);
+        return ResponseEntity.ok(new ApiMessageResponse(HttpStatus.OK.value(), message));
     }
 }

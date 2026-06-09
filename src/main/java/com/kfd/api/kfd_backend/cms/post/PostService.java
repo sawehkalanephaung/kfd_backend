@@ -163,13 +163,20 @@ public class PostService {
 
     /**
      * Soft-deletes a post by setting its status to ARCHIVED.
-     * The record is preserved in the database for auditing.
+     * If the post is already ARCHIVED, it permanently hard-deletes the record from the database.
+     * @return true if permanently deleted, false if archived (soft-deleted)
      */
     @Transactional
-    public void archivePost(UUID id) {
+    public boolean deleteOrArchivePost(UUID id) {
         Post post = findOrThrow(id);
-        post.setStatus(PostStatus.ARCHIVED);
-        post.setLastUpdatedBy(MOCK_ADMIN_ID);
-        postRepository.save(post);
+        if (post.getStatus() == PostStatus.ARCHIVED) {
+            postRepository.delete(post);
+            return true;
+        } else {
+            post.setStatus(PostStatus.ARCHIVED);
+            post.setLastUpdatedBy(MOCK_ADMIN_ID);
+            postRepository.save(post);
+            return false;
+        }
     }
 }
