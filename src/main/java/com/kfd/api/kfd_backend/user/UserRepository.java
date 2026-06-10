@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.auth;
+package com.kfd.api.kfd_backend.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

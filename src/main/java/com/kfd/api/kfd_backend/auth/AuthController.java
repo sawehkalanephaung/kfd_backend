@@ -1,6 +1,9 @@
 package com.kfd.api.kfd_backend.auth;
 
 import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
+import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
+import com.kfd.api.kfd_backend.user.User;
+import com.kfd.api.kfd_backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

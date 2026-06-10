@@ -1,6 +1,6 @@
 package com.kfd.api.kfd_backend.global.config;
 
-import com.kfd.api.kfd_backend.auth.User;
+import com.kfd.api.kfd_backend.user.User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

@@ -1,5 +1,6 @@
 package com.kfd.api.kfd_backend.auth;
 
+import com.kfd.api.kfd_backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,5 +1,6 @@
 package com.kfd.api.kfd_backend.auth;
 
+import com.kfd.api.kfd_backend.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

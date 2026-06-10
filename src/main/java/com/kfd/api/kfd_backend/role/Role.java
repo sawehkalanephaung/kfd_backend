@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.auth;
+package com.kfd.api.kfd_backend.role;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,4 +22,7 @@ public class Role {
     private String name;
 
     private String description;
+
+    @Column(columnDefinition = "jsonb")
+    private String permissions;
 }

@@ -1,4 +1,6 @@
-package com.kfd.api.kfd_backend.auth;
+package com.kfd.api.kfd_backend.user;
+
+import com.kfd.api.kfd_backend.role.Role;
 
 import jakarta.persistence.*;
 import lombok.*;
