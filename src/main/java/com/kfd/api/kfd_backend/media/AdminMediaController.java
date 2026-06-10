@@ -21,9 +21,6 @@ public class AdminMediaController {
         private final MediaAssetRepository mediaAssetRepository;
         private final StorageService storageService;
 
-        // Dummy user ID for now until Spring Security is wired
-        private static final UUID MOCK_ADMIN_ID = UUID.fromString("d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80");
-
         private MediaResponseDTO toDto(MediaAsset asset) {
                 return MediaResponseDTO.builder()
                                 .id(asset.getId())
@@ -52,7 +49,7 @@ public class AdminMediaController {
                                 .fileType(file.getContentType())
                                 .fileSizeKb((int) (file.getSize() / 1024))
                                 .mediaCategory(category)
-                                .uploadedBy(MOCK_ADMIN_ID)
+                                // uploadedBy is now populated automatically via JPA Auditing + SecurityContextHolder
                                 .build();
 
                 MediaAsset savedAsset = mediaAssetRepository.save(asset);

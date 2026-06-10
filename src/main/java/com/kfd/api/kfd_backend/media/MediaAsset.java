@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "media_assets")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,6 +39,7 @@ public class MediaAsset {
     @Column(name = "media_category", length = 255)
     private String mediaCategory;
 
+    @CreatedBy
     @Column(name = "uploaded_by")
     private UUID uploadedBy;
 

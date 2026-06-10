@@ -14,11 +14,11 @@ INSERT INTO roles (id, name, description, permissions) VALUES
 -- 2. users (references roles; needed for FK in later tables)
 -- --------------------------------------------------------
 INSERT INTO users (id, email, password_hash, display_name, avatar_url, role_id, dashboard_language, status) VALUES
-('d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80', 'admin@kfd.org', '$2a$12$LJ3m4ks9Xk2vRz1qWdFJkOxYz8N3pQ7sT0uV2wXyZ1aB3cD4eF5gH', 'Saw Eh Ka La Nephaung', NULL, 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', 'en', 'ACTIVE'),
-('e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8091', 'naw.htoo@kfd.org', '$2a$12$aB3cD4eF5gH6iJ7kL8mN9oP0qR1sT2uV3wX4yZ5aB6cD7eF8gH9i', 'Naw Htoo Paw', NULL, 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'th', 'ACTIVE'),
-('f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f809102', 'kyaw.min@kfd.org', '$2a$12$xY1zA2bC3dE4fG5hI6jK7lM8nO9pQ0rS1tU2vW3xY4zA5bC6dE7fG', 'Kyaw Min Aung', NULL, 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'en', 'ACTIVE'),
-('a7b8c9d0-e1f2-4a3b-4c5d-6e7f80910213', 'su.myat@kfd.org', '$2a$12$gH8iJ9kL0mN1oP2qR3sT4uV5wX6yZ7aB8cD9eF0gH1iJ2kL3mN4o', 'Su Myat Mon', NULL, 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', 'th', 'ACTIVE'),
-('b8c9d0e1-f2a3-4b4c-5d6e-7f8091021324', 'thida.win@kfd.org', '$2a$12$pQ5rS6tU7vW8xY9zA0bC1dE2fG3hI4jK5lM6nO7pQ8rS9tU0vW1xY', 'Thida Win', NULL, 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', 'en', 'ACTIVE');
+('d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80', 'admin@kfd.org', '$2y$05$EdN/sX91VWqlzrQCoNPXTOisi3vjgmdgeN1uEIqVrleQa2TRSpsF2', 'Saw Eh Ka La Nephaung', NULL, 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', 'en', 'ACTIVE'),
+('e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8091', 'naw.htoo@kfd.org', '$2y$05$EdN/sX91VWqlzrQCoNPXTOisi3vjgmdgeN1uEIqVrleQa2TRSpsF2', 'Naw Htoo Paw', NULL, 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'th', 'ACTIVE'),
+('f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f809102', 'kyaw.min@kfd.org', '$2y$05$EdN/sX91VWqlzrQCoNPXTOisi3vjgmdgeN1uEIqVrleQa2TRSpsF2', 'Kyaw Min Aung', NULL, 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'en', 'ACTIVE'),
+('a7b8c9d0-e1f2-4a3b-4c5d-6e7f80910213', 'su.myat@kfd.org', '$2y$05$EdN/sX91VWqlzrQCoNPXTOisi3vjgmdgeN1uEIqVrleQa2TRSpsF2', 'Su Myat Mon', NULL, 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', 'th', 'ACTIVE'),
+('b8c9d0e1-f2a3-4b4c-5d6e-7f8091021324', 'thida.win@kfd.org', '$2y$05$EdN/sX91VWqlzrQCoNPXTOisi3vjgmdgeN1uEIqVrleQa2TRSpsF2', 'Thida Win', NULL, 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', 'en', 'ACTIVE');
 
 -- --------------------------------------------------------
 -- 3. team_members (references users via created_by / last_updated_by)
