@@ -22,21 +22,21 @@ public class AdminUserController {
     private final UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<Page<UserResponseDTO>> getAllUsers(Pageable pageable) {
         Page<UserResponseDTO> users = userService.getAllUsers(pageable);
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiDataResponse<UserResponseDTO>> getUserById(@PathVariable UUID id) {
         UserResponseDTO user = userService.getUserById(id);
         return ResponseEntity.ok(new ApiDataResponse<>(HttpStatus.OK.value(), "User retrieved successfully", user));
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<UserResponseDTO>> createUser(@RequestBody UserRequestDTO requestDTO) {
         UserResponseDTO createdUser = userService.createUser(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -44,14 +44,16 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<ApiDataResponse<UserResponseDTO>> updateUser(@PathVariable UUID id, @RequestBody UserRequestDTO requestDTO) {
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    public ResponseEntity<ApiDataResponse<UserResponseDTO>> updateUser(@PathVariable UUID id,
+            @RequestBody UserRequestDTO requestDTO) {
         UserResponseDTO updatedUser = userService.updateUser(id, requestDTO);
-        return ResponseEntity.ok(new ApiDataResponse<>(HttpStatus.OK.value(), "User updated successfully", updatedUser));
+        return ResponseEntity
+                .ok(new ApiDataResponse<>(HttpStatus.OK.value(), "User updated successfully", updatedUser));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(

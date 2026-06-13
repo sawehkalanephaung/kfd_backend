@@ -19,21 +19,21 @@ public class AdminRoleController {
     private final RoleService roleService;
 
     @GetMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiDataResponse<List<RoleResponseDTO>>> getAllRoles() {
         List<RoleResponseDTO> roles = roleService.getAllRoles();
         return ResponseEntity.ok(new ApiDataResponse<>(HttpStatus.OK.value(), "Roles retrieved successfully", roles));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiDataResponse<RoleResponseDTO>> getRoleById(@PathVariable UUID id) {
         RoleResponseDTO role = roleService.getRoleById(id);
         return ResponseEntity.ok(new ApiDataResponse<>(HttpStatus.OK.value(), "Role retrieved successfully", role));
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<RoleResponseDTO>> createRole(@RequestBody RoleRequestDTO requestDTO) {
         RoleResponseDTO createdRole = roleService.createRole(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -41,14 +41,16 @@ public class AdminRoleController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<ApiDataResponse<RoleResponseDTO>> updateRole(@PathVariable UUID id, @RequestBody RoleRequestDTO requestDTO) {
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    public ResponseEntity<ApiDataResponse<RoleResponseDTO>> updateRole(@PathVariable UUID id,
+            @RequestBody RoleRequestDTO requestDTO) {
         RoleResponseDTO updatedRole = roleService.updateRole(id, requestDTO);
-        return ResponseEntity.ok(new ApiDataResponse<>(HttpStatus.OK.value(), "Role updated successfully", updatedRole));
+        return ResponseEntity
+                .ok(new ApiDataResponse<>(HttpStatus.OK.value(), "Role updated successfully", updatedRole));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteRole(@PathVariable UUID id) {
         roleService.deleteRole(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
