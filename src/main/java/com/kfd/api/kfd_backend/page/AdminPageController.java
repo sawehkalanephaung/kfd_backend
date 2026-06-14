@@ -33,7 +33,8 @@ public class AdminPageController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<ApiDataResponse<PageResponseDTO>> create(@RequestBody PageRequestDTO dto, Authentication auth) {
+    public ResponseEntity<ApiDataResponse<PageResponseDTO>> create(@RequestBody PageRequestDTO dto,
+            Authentication auth) {
         UUID userId = resolveUserId(auth);
         PageResponseDTO created = pageService.create(dto, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiDataResponse<>(201, "Page created", created));
@@ -41,7 +42,8 @@ public class AdminPageController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<ApiDataResponse<PageResponseDTO>> update(@PathVariable UUID id, @RequestBody PageRequestDTO dto, Authentication auth) {
+    public ResponseEntity<ApiDataResponse<PageResponseDTO>> update(@PathVariable UUID id,
+            @RequestBody PageRequestDTO dto, Authentication auth) {
         UUID userId = resolveUserId(auth);
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Page updated", pageService.update(id, dto, userId)));
     }
