@@ -28,6 +28,7 @@ services:
       # ─── Resend Email API ───
       RESEND_API_KEY: ${RESEND_API_KEY}
       EMAIL_TO: ${EMAIL_TO}
+      APP_MAIL_RECIPIENT: ${EMAIL_TO}
     depends_on:
       db:
         condition: service_healthy
