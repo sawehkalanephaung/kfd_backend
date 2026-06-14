@@ -29,27 +29,33 @@ public class AdminDepartmentController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiDataResponse<DepartmentAdminResponseDTO>> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(new ApiDataResponse<>(200, "Department retrieved successfully", departmentService.getByIdAdmin(id)));
+        return ResponseEntity.ok(
+                new ApiDataResponse<>(200, "Department retrieved successfully", departmentService.getByIdAdmin(id)));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<ApiDataResponse<DepartmentAdminResponseDTO>> create(@RequestBody DepartmentAdminRequestDTO dto) {
+    public ResponseEntity<ApiDataResponse<DepartmentAdminResponseDTO>> create(
+            @RequestBody DepartmentAdminRequestDTO dto) {
         DepartmentAdminResponseDTO created = departmentService.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiDataResponse<>(201, "Department created successfully", created));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiDataResponse<>(201, "Department created successfully", created));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<ApiDataResponse<DepartmentAdminResponseDTO>> update(@PathVariable UUID id, @RequestBody DepartmentAdminRequestDTO dto) {
-        return ResponseEntity.ok(new ApiDataResponse<>(200, "Department updated successfully", departmentService.update(id, dto)));
+    public ResponseEntity<ApiDataResponse<DepartmentAdminResponseDTO>> update(@PathVariable UUID id,
+            @RequestBody DepartmentAdminRequestDTO dto) {
+        return ResponseEntity
+                .ok(new ApiDataResponse<>(200, "Department updated successfully", departmentService.update(id, dto)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> delete(@PathVariable UUID id) {
         departmentService.delete(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiMessageResponse(204, "Department deleted successfully"));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(new ApiMessageResponse(204, "Department deleted successfully"));
     }
 
     // ─── Contact sub-resource ────────────────────────────────────────────────────
@@ -62,15 +68,18 @@ public class AdminDepartmentController {
 
     @PostMapping("/{id}/contacts")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<ApiDataResponse<DepartmentContactResponseDTO>> addContact(@PathVariable UUID id, @RequestBody DepartmentContactRequestDTO dto) {
+    public ResponseEntity<ApiDataResponse<DepartmentContactResponseDTO>> addContact(@PathVariable UUID id,
+            @RequestBody DepartmentContactRequestDTO dto) {
         DepartmentContactResponseDTO created = departmentService.addContact(id, dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiDataResponse<>(201, "Contact added successfully", created));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiDataResponse<>(201, "Contact added successfully", created));
     }
 
     @DeleteMapping("/contacts/{contactId}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ApiMessageResponse> deleteContact(@PathVariable UUID contactId) {
         departmentService.deleteContact(contactId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiMessageResponse(204, "Contact deleted successfully"));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(new ApiMessageResponse(204, "Contact deleted successfully"));
     }
 }
