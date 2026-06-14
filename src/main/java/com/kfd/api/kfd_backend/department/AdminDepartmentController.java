@@ -75,6 +75,15 @@ public class AdminDepartmentController {
                 .body(new ApiDataResponse<>(201, "Contact added successfully", created));
     }
 
+    // Update contact
+    @PutMapping("/contacts/{contactId}")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    public ResponseEntity<ApiDataResponse<DepartmentContactResponseDTO>> updateContact(@PathVariable UUID contactId,
+            @RequestBody DepartmentContactRequestDTO dto) {
+        DepartmentContactResponseDTO updated = departmentService.updateContact(contactId, dto);
+        return ResponseEntity.ok(new ApiDataResponse<>(200, "Contact updated successfully", updated));
+    }
+
     @DeleteMapping("/contacts/{contactId}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ApiMessageResponse> deleteContact(@PathVariable UUID contactId) {

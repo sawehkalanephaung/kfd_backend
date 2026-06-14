@@ -201,6 +201,22 @@ public class DepartmentService {
     }
 
     @Transactional
+    public DepartmentContactResponseDTO updateContact(UUID contactId, DepartmentContactRequestDTO dto) {
+        DepartmentContact contact = departmentContactRepository.findById(contactId)
+                .orElseThrow(() -> new ResourceNotFoundException("DepartmentContact", "id", contactId));
+        contact.setName(dto.getName());
+        contact.setRole(dto.getRole());
+        contact.setEmail(dto.getEmail());
+        contact.setPhone(dto.getPhone());
+        contact.setAddress(dto.getAddress());
+        contact.setWebsiteUrl(dto.getWebsiteUrl());
+        contact.setSocialLinks(dto.getSocialLinks());
+        contact.setAdditionalDetails(dto.getAdditionalDetails());
+        if (dto.getOrderIndex() != null) contact.setOrderIndex(dto.getOrderIndex());
+        return toContactDto(departmentContactRepository.save(contact));
+    }
+
+    @Transactional
     public void deleteContact(UUID contactId) {
         DepartmentContact contact = departmentContactRepository.findById(contactId)
                 .orElseThrow(() -> new ResourceNotFoundException("DepartmentContact", "id", contactId));
