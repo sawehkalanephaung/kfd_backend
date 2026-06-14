@@ -57,4 +57,10 @@ public class InquiryService {
         inquiry.setStatus(status);
         return toDto(inquiryRepository.save(inquiry));
     }
+    @Transactional
+    public void delete(UUID id) {
+        Inquiry inquiry = inquiryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Inquiry", "id", id));
+        inquiryRepository.delete(inquiry);
+    }
 }

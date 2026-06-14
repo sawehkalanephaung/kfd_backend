@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
+import org.springframework.http.HttpStatus;
 import java.util.UUID;
 
 @RestController
@@ -33,5 +35,11 @@ public class AdminInquiryController {
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ApiDataResponse<InquiryResponseDTO>> updateStatus(@PathVariable UUID id, @RequestParam String status) {
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Status updated", inquiryService.updateStatus(id, status)));
+    }
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    public ResponseEntity<ApiMessageResponse> delete(@PathVariable UUID id) {
+        inquiryService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiMessageResponse(204, "Inquiry deleted"));
     }
 }
