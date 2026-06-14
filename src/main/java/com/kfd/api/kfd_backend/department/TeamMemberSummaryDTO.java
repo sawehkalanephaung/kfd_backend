@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.team_member;
+package com.kfd.api.kfd_backend.department;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,18 +7,16 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+/** Lightweight team member summary embedded in DepartmentPublicResponseDTO. */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamMemberDto {
+public class TeamMemberSummaryDTO {
     private UUID id;
     private String firstName;
     private String lastName;
     private String title;
-    private UUID departmentId;
-    private String departmentName;
-    private String bio;
     private String headshotUrl;
     private Integer displayOrder;
     private Boolean isActive;

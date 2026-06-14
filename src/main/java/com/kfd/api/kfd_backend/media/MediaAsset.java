@@ -39,6 +39,12 @@ public class MediaAsset {
     @Column(name = "media_category", length = 255)
     private String mediaCategory;
 
+    @Column(name = "department_id")
+    private UUID departmentId;
+
+    @Column(name = "file_path", length = 1024)
+    private String filePath;
+
     @CreatedBy
     @Column(name = "uploaded_by")
     private UUID uploadedBy;

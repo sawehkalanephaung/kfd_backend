@@ -2,6 +2,7 @@ package com.kfd.api.kfd_backend.cms.post;
 
 import com.kfd.api.kfd_backend.cms.category.PostCategory;
 import com.kfd.api.kfd_backend.cms.tag.Tag;
+import com.kfd.api.kfd_backend.department.Department;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,6 +49,10 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private PostCategory category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     // Many posts can have many tags via the post_tags junction table
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

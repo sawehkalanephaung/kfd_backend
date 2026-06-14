@@ -1,5 +1,6 @@
 package com.kfd.api.kfd_backend.team_member;
 
+import com.kfd.api.kfd_backend.department.Department;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Builder
 @Table(name = "team_members")
 public class TeamMember {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -24,15 +26,15 @@ public class TeamMember {
 
     @Column(name = "last_name", nullable = false, length = 255)
     private String lastName;
-    // JSONB field — stored as {"en": "Executive Director"}
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "title", columnDefinition = "jsonb")
     private String title;
 
-    @Column(name = "department", length = 255)
-    private String department;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
-    // JSONB field — stored as {"en": "Bio text here..."}
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "bio", columnDefinition = "jsonb")
     private String bio;
@@ -52,10 +54,4 @@ public class TeamMember {
 
     @Column(name = "last_updated_by")
     private UUID lastUpdatedBy;
-
-
-
-
-
-
 }

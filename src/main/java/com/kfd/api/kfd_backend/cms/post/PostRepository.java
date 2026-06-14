@@ -3,6 +3,7 @@ package com.kfd.api.kfd_backend.cms.post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,6 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
     @Query("SELECT COUNT(p) > 0 FROM Post p WHERE p.category.id = :categoryId")
     boolean existsByCategoryId(@Param("categoryId") UUID categoryId);
+
+    List<Post> findByDepartmentIdOrderByPublishedAtDesc(UUID departmentId);
 }

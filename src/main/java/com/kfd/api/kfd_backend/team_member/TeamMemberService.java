@@ -1,5 +1,8 @@
 package com.kfd.api.kfd_backend.team_member;
 
+import com.kfd.api.kfd_backend.department.Department;
+import com.kfd.api.kfd_backend.department.DepartmentRepository;
+import com.kfd.api.kfd_backend.global.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,9 +13,10 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class TeamMemberService {
-    private final TeamMemberRepository teamMemberRepository;
 
-    // Public: only active members
+    private final TeamMemberRepository teamMemberRepository;
+    private final DepartmentRepository departmentRepository;
+
     public List<TeamMemberDto> getActiveMembers() {
         return teamMemberRepository.findByIsActiveTrueOrderByDisplayOrderAsc()
                 .stream()
@@ -20,23 +24,22 @@ public class TeamMemberService {
                 .toList();
     }
 
-    // Admin: all members (active and inactive)
-    public List<TeamMember> getAllMembers() {
-        return teamMemberRepository.findAll();
+    public List<TeamMemberDto> getAllMembers() {
+        return teamMemberRepository.findAll().stream().map(this::toDto).toList();
     }
 
-    public TeamMember getMemberById(UUID id) {
-        return teamMemberRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Team member not found with ID: " + id));
+    public TeamMemberDto getMemberById(UUID id) {
+        return toDto(findOrThrow(id));
     }
 
     @Transactional
-    public TeamMember createMember(TeamMemberDto dto, UUID currentUserId) {
+    public TeamMemberDto createMember(TeamMemberDto dto, UUID currentUserId) {
+        Department department = resolveDepart(dto.getDepartmentId());
         TeamMember member = TeamMember.builder()
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .title(dto.getTitle())
-                .department(dto.getDepartment())
+                .department(department)
                 .bio(dto.getBio())
                 .headshotUrl(dto.getHeadshotUrl())
                 .displayOrder(dto.getDisplayOrder() != null ? dto.getDisplayOrder() : 0)
@@ -44,43 +47,52 @@ public class TeamMemberService {
                 .createdBy(currentUserId)
                 .lastUpdatedBy(currentUserId)
                 .build();
-        return teamMemberRepository.save(member);
+        return toDto(teamMemberRepository.save(member));
     }
 
     @Transactional
-    public TeamMember updateMember(UUID id, TeamMemberDto dto, UUID currentUserId) {
-        TeamMember member = getMemberById(id);
+    public TeamMemberDto updateMember(UUID id, TeamMemberDto dto, UUID currentUserId) {
+        TeamMember member = findOrThrow(id);
         member.setFirstName(dto.getFirstName());
         member.setLastName(dto.getLastName());
         member.setTitle(dto.getTitle());
-        member.setDepartment(dto.getDepartment());
+        member.setDepartment(resolveDepart(dto.getDepartmentId()));
         member.setBio(dto.getBio());
         member.setHeadshotUrl(dto.getHeadshotUrl());
         member.setDisplayOrder(dto.getDisplayOrder());
         member.setIsActive(dto.getIsActive());
         member.setLastUpdatedBy(currentUserId);
-        return teamMemberRepository.save(member);
+        return toDto(teamMemberRepository.save(member));
     }
 
     @Transactional
     public void deleteMember(UUID id) {
-        TeamMember member = getMemberById(id);
-        teamMemberRepository.delete(member);
+        teamMemberRepository.delete(findOrThrow(id));
     }
 
-    // Helper: map Entity → DTO
-    private TeamMemberDto toDto(TeamMember member) {
+    private TeamMemberDto toDto(TeamMember m) {
         return TeamMemberDto.builder()
-                .id(member.getId())
-                .firstName(member.getFirstName())
-                .lastName(member.getLastName())
-                .title(member.getTitle())
-                .department(member.getDepartment())
-                .bio(member.getBio())
-                .headshotUrl(member.getHeadshotUrl())
-                .displayOrder(member.getDisplayOrder())
-                .isActive(member.getIsActive())
+                .id(m.getId())
+                .firstName(m.getFirstName())
+                .lastName(m.getLastName())
+                .title(m.getTitle())
+                .departmentId(m.getDepartment() != null ? m.getDepartment().getId() : null)
+                .departmentName(m.getDepartment() != null ? m.getDepartment().getName() : null)
+                .bio(m.getBio())
+                .headshotUrl(m.getHeadshotUrl())
+                .displayOrder(m.getDisplayOrder())
+                .isActive(m.getIsActive())
                 .build();
     }
 
-} // end of class
+    private TeamMember findOrThrow(UUID id) {
+        return teamMemberRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("TeamMember", "id", id));
+    }
+
+    private Department resolveDepart(UUID departmentId) {
+        if (departmentId == null) return null;
+        return departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Department", "id", departmentId));
+    }
+}
