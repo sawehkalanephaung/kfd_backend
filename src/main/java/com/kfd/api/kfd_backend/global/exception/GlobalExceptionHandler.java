@@ -143,6 +143,37 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
+    /**
+     * Handles MailSendFailedException → HTTP 503 Service Unavailable
+     * Triggered when: email delivery via Resend API fails (e.g., bad API key, rate limit).
+     */
+    @ExceptionHandler(com.kfd.api.kfd_backend.inquiry.MailSendFailedException.class)
+    public ResponseEntity<ApiErrorResponse> handleMailSendFailed(
+            com.kfd.api.kfd_backend.inquiry.MailSendFailedException ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.SERVICE_UNAVAILABLE.value(), // 503
+                "Service Unavailable",
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(body);
+    }
+
+    /**
+     * Handles Bean Validation errors → HTTP 400 Bad Request
+     * Triggered when: @Valid fails on a @RequestBody (e.g., missing @NotBlank fields).
+     */
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleValidationErrors(
+            org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        String firstError = ex.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+                .orElse("Validation failed");
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(), // 400
+                "Bad Request",
+                firstError);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
 
     /**
      * Fallback handler for any unexpected exception → HTTP 500 Internal Server

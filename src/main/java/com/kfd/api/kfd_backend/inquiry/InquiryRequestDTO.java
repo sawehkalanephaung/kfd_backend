@@ -1,18 +1,22 @@
 package com.kfd.api.kfd_backend.inquiry;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class InquiryRequestDTO {
-    private String senderName;
-    private String senderEmail;
-    private String inquiryType;
-    private String subject;
-    private String message;
-}
+public record InquiryRequestDTO(
+        @NotBlank(message = "Sender name is required")
+        String senderName,
+
+        @NotBlank(message = "Sender email is required")
+        @Email(message = "Sender email must be a valid email address")
+        String senderEmail,
+
+        @NotBlank(message = "Inquiry type is required")
+        String inquiryType,
+
+        @NotBlank(message = "Subject is required")
+        String subject,
+
+        @NotBlank(message = "Message is required")
+        String message
+) {}

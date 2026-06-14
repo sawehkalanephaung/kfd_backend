@@ -1,8 +1,8 @@
 package com.kfd.api.kfd_backend.inquiry;
 
-import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
+import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PublicInquiryController {
 
-    private final InquiryService inquiryService;
+    private final MailService mailService;
 
-    @PostMapping
-    public ResponseEntity<ApiDataResponse<InquiryResponseDTO>> submit(@RequestBody InquiryRequestDTO dto) {
-        InquiryResponseDTO created = inquiryService.submit(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiDataResponse<>(201, "Inquiry submitted successfully", created));
+    @PostMapping("/send")
+    public ResponseEntity<ApiMessageResponse> submitInquiry(@Valid @RequestBody InquiryRequestDTO dto) {
+        mailService.sendInquiryEmail(dto);
+        return ResponseEntity.ok(new ApiMessageResponse(200, "Your inquiry has been sent successfully."));
     }
 }
