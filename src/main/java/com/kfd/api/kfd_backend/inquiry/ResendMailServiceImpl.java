@@ -14,12 +14,12 @@ import java.util.List;
 public class ResendMailServiceImpl implements MailService {
 
     private final RestClient restClient;
-    private final String recipientEmail;
+    private final com.kfd.api.kfd_backend.settings.ContactSettingsService contactSettingsService;
 
     public ResendMailServiceImpl(
             @Value("${resend.api.key}") String apiKey,
-            @Value("${app.mail.recipient}") String recipientEmail) {
-        this.recipientEmail = recipientEmail;
+            com.kfd.api.kfd_backend.settings.ContactSettingsService contactSettingsService) {
+        this.contactSettingsService = contactSettingsService;
         this.restClient = RestClient.builder()
                 .baseUrl("https://api.resend.com")
                 .defaultHeader("Authorization", "Bearer " + apiKey)
@@ -28,6 +28,9 @@ public class ResendMailServiceImpl implements MailService {
 
     @Override
     public void sendInquiryEmail(InquiryRequestDTO request) {
+        // Fetch dynamic email from settings table
+        String recipientEmail = contactSettingsService.getDefaultSettings().contactEmail();
+
         ResendEmailRequest payload = new ResendEmailRequest(
                 "KFD Website <onboarding@resend.dev>",
                 List.of(recipientEmail),
