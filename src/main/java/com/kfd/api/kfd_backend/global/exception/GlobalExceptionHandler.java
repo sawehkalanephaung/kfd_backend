@@ -176,8 +176,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Fallback handler for any unexpected exception → HTTP 500 Internal Server
-     * Error
+     * Handles Spring Security Access/Authorization Denied exceptions → HTTP 403 Forbidden
+     * Triggered when: a user with a valid token tries to access a @PreAuthorize endpoint they don't have roles for.
+     */
+    @ExceptionHandler({
+            org.springframework.security.access.AccessDeniedException.class,
+            org.springframework.security.authorization.AuthorizationDeniedException.class
+    })
+    public ResponseEntity<ApiErrorResponse> handleAccessDeniedException(Exception ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.FORBIDDEN.value(), // 403
+                "Forbidden",
+                "You do not have permission to access this resource.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+
+    /**
+     * Fallback handler for any unexpected exception → HTTP 500 Internal Server Error
      * Prevents leaking internal stack traces to the API consumer.
      */
     @ExceptionHandler(Exception.class)

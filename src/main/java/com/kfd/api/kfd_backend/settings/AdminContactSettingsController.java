@@ -19,25 +19,26 @@ public class AdminContactSettingsController {
     private final ContactSettingsService contactSettingsService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<ContactSettingsResponseDTO>> getAllSettings() {
         return ResponseEntity.ok(contactSettingsService.getAllSettings());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ContactSettingsResponseDTO> getSettingsById(@PathVariable UUID id) {
         return ResponseEntity.ok(contactSettingsService.getSettingsById(id));
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ContactSettingsResponseDTO> createSettings(@Valid @RequestBody ContactSettingsRequestDTO dto) {
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<ContactSettingsResponseDTO> createSettings(
+            @Valid @RequestBody ContactSettingsRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(contactSettingsService.createSettings(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ContactSettingsResponseDTO> updateSettings(
             @PathVariable UUID id,
             @Valid @RequestBody ContactSettingsRequestDTO dto) {
@@ -45,7 +46,7 @@ public class AdminContactSettingsController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteSettings(@PathVariable UUID id) {
         contactSettingsService.deleteSettings(id);
         return ResponseEntity.ok(new ApiMessageResponse(200, "Contact settings deleted successfully."));
