@@ -130,6 +130,21 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles NoResourceFoundException → HTTP 404 Not Found
+     * Triggered when: a client requests a URL path that does not exist.
+     * Prevents Spring Boot 3.2+ from throwing a 500 for missing endpoints.
+     */
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNoResourceFound(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.NOT_FOUND.value(), // 404
+                "Not Found",
+                "The requested endpoint does not exist: " + ex.getResourcePath());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+
+    /**
      * Fallback handler for any unexpected exception → HTTP 500 Internal Server
      * Error
      * Prevents leaking internal stack traces to the API consumer.

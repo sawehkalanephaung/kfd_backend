@@ -21,40 +21,48 @@ public class TeamMemberController {
 
     @GetMapping("/public/team-members")
     public ResponseEntity<ApiDataResponse<List<TeamMemberDto>>> getActiveMembers() {
-        return ResponseEntity.ok(new ApiDataResponse<>(200, "Team members retrieved", teamMemberService.getActiveMembers()));
+        return ResponseEntity
+                .ok(new ApiDataResponse<>(200, "Team members retrieved", teamMemberService.getActiveMembers()));
     }
 
     /** Public profile page for a single KFD member — includes full bio. */
     @GetMapping("/public/team-members/{id}")
     public ResponseEntity<ApiDataResponse<TeamMemberDto>> getMemberPublic(@PathVariable UUID id) {
-        return ResponseEntity.ok(new ApiDataResponse<>(200, "Team member retrieved", teamMemberService.getMemberById(id)));
+        return ResponseEntity
+                .ok(new ApiDataResponse<>(200, "Team member retrieved", teamMemberService.getMemberById(id)));
     }
 
     @GetMapping("/admin/team-members")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiDataResponse<List<TeamMemberDto>>> getAllMembers() {
-        return ResponseEntity.ok(new ApiDataResponse<>(200, "All team members retrieved", teamMemberService.getAllMembers()));
+        return ResponseEntity
+                .ok(new ApiDataResponse<>(200, "All team members retrieved", teamMemberService.getAllMembers()));
     }
 
     @GetMapping("/admin/team-members/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiDataResponse<TeamMemberDto>> getMemberById(@PathVariable UUID id) {
-        return ResponseEntity.ok(new ApiDataResponse<>(200, "Team member retrieved", teamMemberService.getMemberById(id)));
+        return ResponseEntity
+                .ok(new ApiDataResponse<>(200, "Team member retrieved", teamMemberService.getMemberById(id)));
     }
 
     @PostMapping("/admin/team-members")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<ApiDataResponse<TeamMemberDto>> createMember(@RequestBody TeamMemberDto dto, Authentication auth) {
+    public ResponseEntity<ApiDataResponse<TeamMemberDto>> createMember(@RequestBody TeamMemberDto dto,
+            Authentication auth) {
         UUID currentUserId = resolveUserId(auth);
         TeamMemberDto created = teamMemberService.createMember(dto, currentUserId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiDataResponse<>(201, "Team member created", created));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiDataResponse<>(201, "Team member created", created));
     }
 
     @PutMapping("/admin/team-members/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<ApiDataResponse<TeamMemberDto>> updateMember(@PathVariable UUID id, @RequestBody TeamMemberDto dto, Authentication auth) {
+    public ResponseEntity<ApiDataResponse<TeamMemberDto>> updateMember(@PathVariable UUID id,
+            @RequestBody TeamMemberDto dto, Authentication auth) {
         UUID currentUserId = resolveUserId(auth);
-        return ResponseEntity.ok(new ApiDataResponse<>(200, "Team member updated", teamMemberService.updateMember(id, dto, currentUserId)));
+        return ResponseEntity.ok(new ApiDataResponse<>(200, "Team member updated",
+                teamMemberService.updateMember(id, dto, currentUserId)));
     }
 
     @DeleteMapping("/admin/team-members/{id}")
