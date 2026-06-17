@@ -49,6 +49,7 @@ public class DepartmentService {
                 .phone(c.getPhone())
                 .address(c.getAddress())
                 .websiteUrl(c.getWebsiteUrl())
+                .officeHours(c.getOfficeHours())
                 .socialLinks(c.getSocialLinks())
                 .additionalDetails(c.getAdditionalDetails())
                 .orderIndex(c.getOrderIndex())
@@ -193,6 +194,7 @@ public class DepartmentService {
                 .phone(dto.getPhone())
                 .address(dto.getAddress())
                 .websiteUrl(dto.getWebsiteUrl())
+                .officeHours(dto.getOfficeHours())
                 .socialLinks(dto.getSocialLinks())
                 .additionalDetails(dto.getAdditionalDetails())
                 .orderIndex(dto.getOrderIndex() != null ? dto.getOrderIndex() : 0)
@@ -210,6 +212,7 @@ public class DepartmentService {
         contact.setPhone(dto.getPhone());
         contact.setAddress(dto.getAddress());
         contact.setWebsiteUrl(dto.getWebsiteUrl());
+        contact.setOfficeHours(dto.getOfficeHours());
         contact.setSocialLinks(dto.getSocialLinks());
         contact.setAdditionalDetails(dto.getAdditionalDetails());
         if (dto.getOrderIndex() != null) contact.setOrderIndex(dto.getOrderIndex());
