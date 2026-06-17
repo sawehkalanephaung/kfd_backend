@@ -42,6 +42,9 @@ public class DepartmentContact {
     @Column(name = "website_url", length = 1024)
     private String websiteUrl;
 
+    @Column(name = "office_hours", length = 255)
+    private String officeHours;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "social_links", columnDefinition = "jsonb")
     private String socialLinks;

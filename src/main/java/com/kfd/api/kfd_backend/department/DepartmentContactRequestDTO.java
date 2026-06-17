@@ -18,6 +18,7 @@ public class DepartmentContactRequestDTO {
     private String phone;
     private String address;
     private String websiteUrl;
+    private String officeHours;
     private String socialLinks;
     private String additionalDetails;
     private Integer orderIndex;
