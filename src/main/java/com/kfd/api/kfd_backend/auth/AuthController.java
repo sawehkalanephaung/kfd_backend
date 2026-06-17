@@ -1,9 +1,10 @@
 package com.kfd.api.kfd_backend.auth;
 
+import com.kfd.api.kfd_backend.audit.AuditLogService;
 import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
-import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
 import com.kfd.api.kfd_backend.user.User;
 import com.kfd.api.kfd_backend.user.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,13 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final AuditLogService auditLogService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiDataResponse<AuthResponseDTO>> login(@RequestBody AuthRequestDTO request) {
+    public ResponseEntity<ApiDataResponse<AuthResponseDTO>> login(
+            @RequestBody AuthRequestDTO request,
+            HttpServletRequest httpRequest) {
+
         // Authenticate the user (throws exception if bad credentials)
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -42,6 +47,9 @@ public class AuthController {
 
         // Generate JWT token
         String jwtToken = jwtService.generateToken(user);
+
+        // Record successful login in the audit log (async — non-blocking)
+        auditLogService.log(user.getId(), "LOGIN", "USER", httpRequest);
 
         // Build Response
         AuthResponseDTO responseDTO = AuthResponseDTO.builder()
@@ -63,3 +71,4 @@ public class AuthController {
         );
     }
 }
+
