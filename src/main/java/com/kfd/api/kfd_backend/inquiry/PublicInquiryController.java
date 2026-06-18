@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.kfd.api.kfd_backend.global.mail.MailService;
 
 @RestController
 @RequestMapping("/api/v1/public/inquiries")

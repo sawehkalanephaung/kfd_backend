@@ -1,5 +1,7 @@
-package com.kfd.api.kfd_backend.inquiry;
+package com.kfd.api.kfd_backend.global.mail;
 
+import com.kfd.api.kfd_backend.inquiry.InquiryRequestDTO;
+import com.kfd.api.kfd_backend.settings.ContactSettingsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -14,11 +16,11 @@ import java.util.List;
 public class ResendMailServiceImpl implements MailService {
 
     private final RestClient restClient;
-    private final com.kfd.api.kfd_backend.settings.ContactSettingsService contactSettingsService;
+    private final ContactSettingsService contactSettingsService;
 
     public ResendMailServiceImpl(
             @Value("${resend.api.key}") String apiKey,
-            com.kfd.api.kfd_backend.settings.ContactSettingsService contactSettingsService) {
+            ContactSettingsService contactSettingsService) {
         this.contactSettingsService = contactSettingsService;
         this.restClient = RestClient.builder()
                 .baseUrl("https://api.resend.com")
@@ -28,17 +30,31 @@ public class ResendMailServiceImpl implements MailService {
 
     @Override
     public void sendInquiryEmail(InquiryRequestDTO request) {
-        // Fetch dynamic email from settings table
         String recipientEmail = contactSettingsService.getDefaultSettings().contactEmail();
 
         ResendEmailRequest payload = new ResendEmailRequest(
                 "KFD Website <onboarding@resend.dev>",
                 List.of(recipientEmail),
                 "[KFD Inquiry - " + request.inquiryType() + "] " + request.subject(),
-                buildHtmlBody(request),
+                buildInquiryHtmlBody(request),
                 request.senderEmail()
         );
+        sendViaResend(payload, "Inquiry from " + request.senderEmail());
+    }
 
+    @Override
+    public void sendPasswordResetEmail(String toEmail, String resetLink) {
+        ResendEmailRequest payload = new ResendEmailRequest(
+                "KFD Admin <onboarding@resend.dev>",
+                List.of(toEmail),
+                "Reset Your KFD Admin Password",
+                buildPasswordResetHtmlBody(resetLink),
+                "noreply@kfd.org"
+        );
+        sendViaResend(payload, "Password reset for " + toEmail);
+    }
+
+    private void sendViaResend(ResendEmailRequest payload, String contextLog) {
         try {
             restClient.post()
                     .uri("/emails")
@@ -46,20 +62,17 @@ public class ResendMailServiceImpl implements MailService {
                     .body(payload)
                     .retrieve()
                     .toBodilessEntity();
-
-            log.info("Inquiry email sent via Resend from {} ({})",
-                    request.senderName(), request.senderEmail());
-
+            log.info("Email sent via Resend successfully: {}", contextLog);
         } catch (RestClientResponseException e) {
             log.error("Resend API error [{}]: {}", e.getStatusCode(), e.getResponseBodyAsString(), e);
-            throw new MailSendFailedException("Failed to send your inquiry. Please try again later.");
+            throw new MailSendFailedException("Failed to send email. Please try again later.");
         } catch (Exception e) {
             log.error("Unexpected error calling Resend API: {}", e.getMessage(), e);
-            throw new MailSendFailedException("Failed to send your inquiry. Please try again later.");
+            throw new MailSendFailedException("Failed to send email. Please try again later.");
         }
     }
 
-    private String buildHtmlBody(InquiryRequestDTO request) {
+    private String buildInquiryHtmlBody(InquiryRequestDTO request) {
         return """
                 <html>
                 <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -101,6 +114,24 @@ public class ResendMailServiceImpl implements MailService {
                 escapeHtml(request.subject()),
                 escapeHtml(request.message())
         );
+    }
+
+    private String buildPasswordResetHtmlBody(String resetLink) {
+        return """
+                <html>
+                <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                    <h2 style="color: #2c5f2d;">Password Reset Request</h2>
+                    <p>We received a request to reset your password for the KFD Admin Dashboard.</p>
+                    <p>Click the button below to set a new password. This link will expire in 15 minutes.</p>
+                    <br>
+                    <a href="%s" style="background-color: #2c5f2d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Reset Password</a>
+                    <br><br>
+                    <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
+                    <p><a href="%s">%s</a></p>
+                    <p>If you did not request this reset, please ignore this email.</p>
+                </body>
+                </html>
+                """.formatted(resetLink, resetLink, resetLink);
     }
 
     private String escapeHtml(String input) {

@@ -147,9 +147,9 @@ public class GlobalExceptionHandler {
      * Handles MailSendFailedException → HTTP 503 Service Unavailable
      * Triggered when: email delivery via Resend API fails (e.g., bad API key, rate limit).
      */
-    @ExceptionHandler(com.kfd.api.kfd_backend.inquiry.MailSendFailedException.class)
-    public ResponseEntity<ApiErrorResponse> handleMailSendFailed(
-            com.kfd.api.kfd_backend.inquiry.MailSendFailedException ex) {
+    @ExceptionHandler(com.kfd.api.kfd_backend.global.mail.MailSendFailedException.class)
+    public ResponseEntity<ApiErrorResponse> handleMailSendFailedException(
+            com.kfd.api.kfd_backend.global.mail.MailSendFailedException ex) {
         ApiErrorResponse body = new ApiErrorResponse(
                 HttpStatus.SERVICE_UNAVAILABLE.value(), // 503
                 "Service Unavailable",

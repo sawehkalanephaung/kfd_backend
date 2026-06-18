@@ -2,9 +2,11 @@ package com.kfd.api.kfd_backend.auth;
 
 import com.kfd.api.kfd_backend.audit.AuditLogService;
 import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
+import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
 import com.kfd.api.kfd_backend.user.User;
 import com.kfd.api.kfd_backend.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,32 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final AuditLogService auditLogService;
+    private final AuthService authService;
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiMessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO request) {
+        authService.processForgotPassword(request);
+        return ResponseEntity.ok(new ApiMessageResponse(
+                HttpStatus.OK.value(),
+                "If that email exists in our system, we have sent a password reset link."
+        ));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiMessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO request) {
+        try {
+            authService.processResetPassword(request);
+            return ResponseEntity.ok(new ApiMessageResponse(
+                    HttpStatus.OK.value(),
+                    "Password successfully reset. You can now login."
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiMessageResponse(
+                    HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage()
+            ));
+        }
+    }
 
     @PostMapping("/login")
     public ResponseEntity<ApiDataResponse<AuthResponseDTO>> login(
