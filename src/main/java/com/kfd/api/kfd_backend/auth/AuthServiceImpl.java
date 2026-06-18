@@ -48,8 +48,19 @@ public class AuthServiceImpl implements AuthService {
         tokenRepository.save(token);
 
         String resetLink = frontendAdminUrl + "/reset-password?token=" + tokenString;
-        mailService.sendPasswordResetEmail(user.getEmail(), resetLink);
-        log.info("Password reset email sent to {}", user.getEmail());
+        
+        // Always log the link for local testing/development
+        log.info("========== PASSWORD RESET LINK ==========");
+        log.info("User: {}", user.getEmail());
+        log.info("Link: {}", resetLink);
+        log.info("=========================================");
+
+        try {
+            mailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+            log.info("Password reset email sent to {}", user.getEmail());
+        } catch (com.kfd.api.kfd_backend.global.mail.MailSendFailedException e) {
+            log.warn("Could not send email via Resend API. This is expected in local dev without a verified domain. Use the link printed above!");
+        }
     }
 
     @Override
