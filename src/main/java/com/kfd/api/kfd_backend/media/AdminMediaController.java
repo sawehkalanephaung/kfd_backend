@@ -29,6 +29,7 @@ public class AdminMediaController {
                                 .fileType(asset.getFileType())
                                 .fileSizeKb(asset.getFileSizeKb())
                                 .mediaCategory(asset.getMediaCategory())
+                                .departmentId(asset.getDepartmentId())
                                 .uploadedBy(asset.getUploadedBy())
                                 .createdAt(asset.getCreatedAt())
                                 .build();
@@ -37,7 +38,8 @@ public class AdminMediaController {
         @PostMapping("/upload")
         public ResponseEntity<ApiDataResponse<MediaResponseDTO>> uploadFile(
                         @RequestParam("file") MultipartFile file,
-                        @RequestParam(value = "category", required = false, defaultValue = "general") String category) {
+                        @RequestParam(value = "category", required = false, defaultValue = "general") String category,
+                        @RequestParam(value = "departmentId", required = false) UUID departmentId) {
 
                 // 1. Store the file physically
                 String fileUrl = storageService.upload(file);
@@ -49,7 +51,9 @@ public class AdminMediaController {
                                 .fileType(file.getContentType())
                                 .fileSizeKb((int) (file.getSize() / 1024))
                                 .mediaCategory(category)
-                                // uploadedBy is now populated automatically via JPA Auditing + SecurityContextHolder
+                                .departmentId(departmentId)
+                                // uploadedBy is now populated automatically via JPA Auditing +
+                                // SecurityContextHolder
                                 .build();
 
                 MediaAsset savedAsset = mediaAssetRepository.save(asset);
@@ -78,6 +82,27 @@ public class AdminMediaController {
                                                 HttpStatus.OK.value(),
                                                 "Media retrieved successfully",
                                                 toDto(asset)));
+        }
+
+        @PutMapping("/{id}")
+        public ResponseEntity<ApiDataResponse<MediaResponseDTO>> updateMedia(
+                        @PathVariable UUID id,
+                        @RequestParam(value = "category", required = false) String category,
+                        @RequestParam(value = "departmentId", required = false) UUID departmentId) {
+                MediaAsset asset = mediaAssetRepository.findById(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("MediaAsset", "id", id));
+
+                if (category != null)
+                        asset.setMediaCategory(category);
+                if (departmentId != null)
+                        asset.setDepartmentId(departmentId);
+
+                MediaAsset updatedAsset = mediaAssetRepository.save(asset);
+                return ResponseEntity.ok(
+                                new ApiDataResponse<>(
+                                                HttpStatus.OK.value(),
+                                                "Media updated successfully",
+                                                toDto(updatedAsset)));
         }
 
         @DeleteMapping("/{id}")

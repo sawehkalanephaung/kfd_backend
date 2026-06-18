@@ -19,6 +19,7 @@ public class MediaResponseDTO {
     private String fileType;
     private Integer fileSizeKb;
     private String mediaCategory;
+    private UUID departmentId;
     private UUID uploadedBy;
     private OffsetDateTime createdAt;
 }
