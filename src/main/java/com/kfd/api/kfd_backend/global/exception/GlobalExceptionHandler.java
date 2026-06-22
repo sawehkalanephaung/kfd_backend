@@ -192,6 +192,34 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles BadCredentialsException → HTTP 401 Unauthorized
+     * Triggered when: a user provides an incorrect email or password during login.
+     */
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(
+            org.springframework.security.authentication.BadCredentialsException ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(), // 401
+                "Unauthorized",
+                "Invalid email or password.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+    }
+
+    /**
+     * Handles other Authentication exceptions (like DisabledException) → HTTP 401 Unauthorized
+     * Triggered when: a user account is disabled, locked, or other auth failures occur.
+     */
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ApiErrorResponse> handleAuthenticationException(
+            org.springframework.security.core.AuthenticationException ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(), // 401
+                "Unauthorized",
+                "Authentication failed: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+    }
+
+    /**
      * Fallback handler for any unexpected exception → HTTP 500 Internal Server Error
      * Prevents leaking internal stack traces to the API consumer.
      */

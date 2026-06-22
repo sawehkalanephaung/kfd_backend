@@ -9,19 +9,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import com.kfd.api.kfd_backend.media.MediaAssetRepository;
+import com.kfd.api.kfd_backend.media.MediaAsset;
+
 @Service
 @RequiredArgsConstructor
 public class PageService {
 
     private final PageRepository pageRepository;
+    private final MediaAssetRepository mediaAssetRepository;
 
     private PageResponseDTO toDto(com.kfd.api.kfd_backend.page.Page p) {
+        String heroImageUrl = null;
+        if (p.getHeroImageId() != null) {
+            heroImageUrl = mediaAssetRepository.findById(p.getHeroImageId())
+                    .map(MediaAsset::getFileUrl)
+                    .orElse(null);
+        }
+
         return PageResponseDTO.builder()
                 .id(p.getId())
                 .slug(p.getSlug())
                 .title(p.getTitle())
                 .content(p.getContent())
                 .heroImageId(p.getHeroImageId())
+                .heroImageUrl(heroImageUrl)
                 .status(p.getStatus())
                 .createdBy(p.getCreatedBy())
                 .lastUpdatedBy(p.getLastUpdatedBy())

@@ -1,7 +1,7 @@
 package com.kfd.api.kfd_backend.global.mail;
 
 import com.kfd.api.kfd_backend.inquiry.InquiryRequestDTO;
-import com.kfd.api.kfd_backend.settings.ContactSettingsService;
+import com.kfd.api.kfd_backend.settings.contact.ContactSettingsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;

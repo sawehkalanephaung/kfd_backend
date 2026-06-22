@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.settings;
+package com.kfd.api.kfd_backend.settings.contact;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,5 +14,7 @@ public record ContactSettingsRequestDTO(
         String contactEmail,
 
         @NotEmpty(message = "At least one inquiry type must be provided")
-        List<String> inquiryTypes
+        List<String> inquiryTypes,
+        
+        List<String> phoneNumbers
 ) {}

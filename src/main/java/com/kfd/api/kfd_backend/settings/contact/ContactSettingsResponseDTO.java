@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.settings;
+package com.kfd.api.kfd_backend.settings.contact;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,6 +9,7 @@ public record ContactSettingsResponseDTO(
         String physicalAddress,
         String contactEmail,
         List<String> inquiryTypes,
+        List<String> phoneNumbers,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -21,6 +22,7 @@ public record ContactSettingsResponseDTO(
                 settings.getPhysicalAddress(),
                 settings.getContactEmail(),
                 settings.getInquiryTypes(),
+                settings.getPhoneNumbers(),
                 settings.getCreatedAt(),
                 settings.getUpdatedAt()
         );

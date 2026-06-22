@@ -18,6 +18,7 @@ public class PageResponseDTO {
     private String title;
     private String content;
     private UUID heroImageId;
+    private String heroImageUrl;
     private String status;
     private UUID createdBy;
     private UUID lastUpdatedBy;

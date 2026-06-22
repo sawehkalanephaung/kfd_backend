@@ -1,38 +1,37 @@
-package com.kfd.api.kfd_backend.settings;
+package com.kfd.api.kfd_backend.settings.social;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "contact_settings")
+@Table(name = "social_media_links")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ContactSettings {
+public class SocialMediaLink {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "physical_address", columnDefinition = "TEXT")
-    private String physicalAddress;
+    @Column(name = "platform_name", nullable = false)
+    private String platformName;
 
-    @Column(name = "contact_email", nullable = false)
-    private String contactEmail;
+    @Column(name = "url", nullable = false)
+    private String url;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "inquiry_types", columnDefinition = "jsonb", nullable = false)
-    private List<String> inquiryTypes;
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder;
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.settings;
+package com.kfd.api.kfd_backend.settings.contact;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

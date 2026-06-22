@@ -88,7 +88,8 @@ public class AdminMediaController {
         public ResponseEntity<ApiDataResponse<MediaResponseDTO>> updateMedia(
                         @PathVariable UUID id,
                         @RequestParam(value = "category", required = false) String category,
-                        @RequestParam(value = "departmentId", required = false) UUID departmentId) {
+                        @RequestParam(value = "departmentId", required = false) UUID departmentId,
+                        @RequestParam(value = "file", required = false) MultipartFile file) {
                 MediaAsset asset = mediaAssetRepository.findById(id)
                                 .orElseThrow(() -> new ResourceNotFoundException("MediaAsset", "id", id));
 
@@ -96,6 +97,22 @@ public class AdminMediaController {
                         asset.setMediaCategory(category);
                 if (departmentId != null)
                         asset.setDepartmentId(departmentId);
+                        
+                if (file != null && !file.isEmpty()) {
+                        // Delete old file
+                        if (asset.getFileUrl() != null) {
+                                storageService.delete(asset.getFileUrl());
+                        }
+                        
+                        // Upload new file
+                        String newFileUrl = storageService.upload(file);
+                        
+                        // Update asset metadata
+                        asset.setFileName(file.getOriginalFilename());
+                        asset.setFileUrl(newFileUrl);
+                        asset.setFileType(file.getContentType());
+                        asset.setFileSizeKb((int) (file.getSize() / 1024));
+                }
 
                 MediaAsset updatedAsset = mediaAssetRepository.save(asset);
                 return ResponseEntity.ok(

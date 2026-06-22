@@ -47,6 +47,28 @@ public class TagService {
         return toDto(saved);
     }
 
+    private Tag findOrThrow(UUID id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tag", "id", id));
+    }
+
+    public TagDto getTagById(UUID id) {
+        return toDto(findOrThrow(id));
+    }
+
+    @Transactional
+    public TagDto updateTag(UUID id, TagDto dto) {
+        Tag tag = findOrThrow(id);
+
+        if (!java.util.Objects.equals(tag.getSlug(), dto.getSlug()) && tagRepository.existsBySlug(dto.getSlug())) {
+            throw new DuplicateResourceException("Tag", "slug", dto.getSlug());
+        }
+
+        tag.setName(dto.getName());
+        tag.setSlug(dto.getSlug());
+        return toDto(tagRepository.save(tag));
+    }
+
     @Transactional
     public void deleteTag(UUID id) {
         if (!tagRepository.existsById(id)) {

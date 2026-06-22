@@ -1,0 +1,11 @@
+ALTER TABLE contact_settings ADD COLUMN phone_numbers JSONB;
+
+CREATE TABLE social_media_links (
+    id UUID PRIMARY KEY,
+    platform_name VARCHAR(255) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    display_order INTEGER NOT NULL,
+    is_active BOOLEAN NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

@@ -67,7 +67,7 @@ public class PostCategoryService {
         PostCategory category = findOrThrow(id);
 
         // Allow slug update only if not taken by another record
-        if (!category.getSlug().equals(dto.getSlug()) && categoryRepository.existsBySlug(dto.getSlug())) {
+        if (!java.util.Objects.equals(category.getSlug(), dto.getSlug()) && categoryRepository.existsBySlug(dto.getSlug())) {
             throw new DuplicateResourceException("Category", "slug", dto.getSlug());
         }
 

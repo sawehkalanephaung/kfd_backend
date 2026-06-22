@@ -22,6 +22,16 @@ public class TagController {
         return ResponseEntity.ok(tagService.getAllTags());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiDataResponse<TagDto>> getTagById(@PathVariable UUID id) {
+        TagDto tag = tagService.getTagById(id);
+        return ResponseEntity.ok(
+                new ApiDataResponse<>(
+                        HttpStatus.OK.value(),
+                        "Tag retrieved successfully",
+                        tag));
+    }
+
     @PostMapping
     public ResponseEntity<ApiDataResponse<TagDto>> createTag(@RequestBody TagDto dto) {
         TagDto created = tagService.createTag(dto);
@@ -30,6 +40,17 @@ public class TagController {
                         HttpStatus.CREATED.value(),
                         String.format("Tag '%s' was successfully created.", created.getName()),
                         created));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiDataResponse<TagDto>> updateTag(
+            @PathVariable UUID id, @RequestBody TagDto dto) {
+        TagDto updated = tagService.updateTag(id, dto);
+        return ResponseEntity.ok(
+                new ApiDataResponse<>(
+                        HttpStatus.OK.value(),
+                        String.format("Tag '%s' was successfully updated.", updated.getName()),
+                        updated));
     }
 
     @DeleteMapping("/{id}")

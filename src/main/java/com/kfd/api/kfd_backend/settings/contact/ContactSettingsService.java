@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.settings;
+package com.kfd.api.kfd_backend.settings.contact;
 
 import com.kfd.api.kfd_backend.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +56,7 @@ public class ContactSettingsService {
                 .physicalAddress(dto.physicalAddress())
                 .contactEmail(dto.contactEmail())
                 .inquiryTypes(dto.inquiryTypes())
+                .phoneNumbers(dto.phoneNumbers())
                 .build();
 
         ContactSettings saved = repository.save(settings);
@@ -73,6 +74,7 @@ public class ContactSettingsService {
         existing.setPhysicalAddress(dto.physicalAddress());
         existing.setContactEmail(dto.contactEmail());
         existing.setInquiryTypes(dto.inquiryTypes());
+        existing.setPhoneNumbers(dto.phoneNumbers());
 
         ContactSettings updated = repository.save(existing);
         return ContactSettingsResponseDTO.fromEntity(updated);

@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.settings;
+package com.kfd.api.kfd_backend.settings.contact;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

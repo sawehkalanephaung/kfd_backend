@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.settings;
+package com.kfd.api.kfd_backend.settings.contact;
 
 import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
 import jakarta.validation.Valid;
