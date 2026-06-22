@@ -1,9 +1,12 @@
 package com.kfd.api.kfd_backend.cms.post;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +24,19 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
     boolean existsByCategoryId(@Param("categoryId") UUID categoryId);
 
     List<Post> findByDepartmentIdOrderByPublishedAtDesc(UUID departmentId);
+
+    // ── Public API queries ──────────────────────────────────────
+    Page<Post> findByStatusOrderByPublishedAtDesc(PostStatus status, Pageable pageable);
+
+    Page<Post> findByStatusAndCategorySlugOrderByPublishedAtDesc(
+            PostStatus status, String categorySlug, Pageable pageable);
+
+    Optional<Post> findBySlugAndStatus(String slug, PostStatus status);
+
+    // Related posts: same category, exclude current post, limit 3
+    List<Post> findTop3ByStatusAndCategoryIdAndIdNotOrderByPublishedAtDesc(
+            PostStatus status, UUID categoryId, UUID excludeId);
+
+    // Most recent published post (for featured hero)
+    Optional<Post> findFirstByStatusOrderByPublishedAtDesc(PostStatus status);
 }
