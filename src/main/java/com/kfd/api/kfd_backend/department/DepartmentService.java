@@ -5,6 +5,9 @@ import com.kfd.api.kfd_backend.cms.post.PostRepository;
 import com.kfd.api.kfd_backend.global.exception.ResourceNotFoundException;
 import com.kfd.api.kfd_backend.team_member.TeamMember;
 import com.kfd.api.kfd_backend.team_member.TeamMemberRepository;
+import com.kfd.api.kfd_backend.media.MediaAsset;
+import com.kfd.api.kfd_backend.media.MediaAssetRepository;
+import com.kfd.api.kfd_backend.media.MediaResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,8 @@ public class DepartmentService {
     private final DepartmentContactRepository departmentContactRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final PostRepository postRepository;
+    private final DepartmentTimelineEventRepository departmentTimelineEventRepository;
+    private final MediaAssetRepository mediaAssetRepository;
 
     // ─── Mappers ────────────────────────────────────────────────────────────────
 
@@ -68,6 +73,21 @@ public class DepartmentService {
                 .build();
     }
 
+    private MediaResponseDTO toMediaDto(MediaAsset asset) {
+        return MediaResponseDTO.builder()
+                .id(asset.getId())
+                .fileName(asset.getFileName())
+                .fileUrl(asset.getFileUrl())
+                .fileType(asset.getFileType())
+                .fileSizeKb(asset.getFileSizeKb())
+                .mediaCategory(asset.getMediaCategory())
+                .language(asset.getLanguage())
+                .departmentId(asset.getDepartmentId())
+                .uploadedBy(asset.getUploadedBy())
+                .createdAt(asset.getCreatedAt())
+                .build();
+    }
+
     private DepartmentAdminResponseDTO toAdminDto(Department d) {
         return DepartmentAdminResponseDTO.builder()
                 .id(d.getId())
@@ -99,6 +119,14 @@ public class DepartmentService {
                 .findByDepartmentIdOrderByPublishedAtDesc(d.getId())
                 .stream().map(this::toPostSummary).collect(Collectors.toList());
 
+        List<DepartmentTimelineEventDTO> timeline = departmentTimelineEventRepository
+                .findByDepartmentIdOrderByOrderIndexAsc(d.getId())
+                .stream().map(DepartmentTimelineEventDTO::from).collect(Collectors.toList());
+
+        List<MediaResponseDTO> resources = mediaAssetRepository
+                .findByDepartmentId(d.getId())
+                .stream().map(this::toMediaDto).collect(Collectors.toList());
+
         return DepartmentPublicResponseDTO.builder()
                 .id(d.getId())
                 .slug(d.getSlug())
@@ -112,6 +140,8 @@ public class DepartmentService {
                 .contacts(contacts)
                 .teamMembers(members)
                 .posts(posts)
+                .timeline(timeline)
+                .resources(resources)
                 .build();
     }
 

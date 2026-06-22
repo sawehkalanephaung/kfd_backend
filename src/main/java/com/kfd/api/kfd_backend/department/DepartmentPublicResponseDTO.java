@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.kfd.api.kfd_backend.media.MediaResponseDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,4 +32,6 @@ public class DepartmentPublicResponseDTO {
     private List<DepartmentContactResponseDTO> contacts;
     private List<TeamMemberSummaryDTO> teamMembers;
     private List<PostSummaryDTO> posts;
+    private List<DepartmentTimelineEventDTO> timeline;
+    private List<MediaResponseDTO> resources;
 }

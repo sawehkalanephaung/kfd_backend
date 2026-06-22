@@ -29,6 +29,7 @@ public class AdminMediaController {
                                 .fileType(asset.getFileType())
                                 .fileSizeKb(asset.getFileSizeKb())
                                 .mediaCategory(asset.getMediaCategory())
+                                .language(asset.getLanguage())
                                 .departmentId(asset.getDepartmentId())
                                 .uploadedBy(asset.getUploadedBy())
                                 .createdAt(asset.getCreatedAt())
@@ -51,6 +52,7 @@ public class AdminMediaController {
                                 .fileType(file.getContentType())
                                 .fileSizeKb((int) (file.getSize() / 1024))
                                 .mediaCategory(category)
+                                .language("English") // Default language or take from param
                                 .departmentId(departmentId)
                                 // uploadedBy is now populated automatically via JPA Auditing +
                                 // SecurityContextHolder

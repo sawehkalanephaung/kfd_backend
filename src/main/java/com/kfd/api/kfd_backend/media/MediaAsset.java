@@ -39,6 +39,9 @@ public class MediaAsset {
     @Column(name = "media_category", length = 255)
     private String mediaCategory;
 
+    @Column(name = "language", length = 100)
+    private String language;
+
     @Column(name = "department_id")
     private UUID departmentId;
 
