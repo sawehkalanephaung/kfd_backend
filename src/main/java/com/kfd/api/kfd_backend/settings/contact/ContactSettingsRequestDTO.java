@@ -13,8 +13,9 @@ public record ContactSettingsRequestDTO(
         @Email(message = "Must be a valid email address")
         String contactEmail,
 
-        @NotEmpty(message = "At least one inquiry type must be provided")
         List<String> inquiryTypes,
         
-        List<String> phoneNumbers
+        List<String> phoneNumbers,
+
+        String officeHours
 ) {}

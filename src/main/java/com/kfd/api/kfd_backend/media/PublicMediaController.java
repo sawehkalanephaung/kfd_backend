@@ -43,10 +43,31 @@ public class PublicMediaController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "newest") String sort) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<MediaAsset> assets = mediaAssetRepository.searchMediaPublic(category, search, pageable);
+        String safeCategory = category == null ? "" : category;
+        String safeSearch = search == null ? "" : search;
+        
+        Sort sortObj;
+        switch (sort.toLowerCase()) {
+            case "oldest":
+                sortObj = Sort.by(Sort.Direction.ASC, "createdAt");
+                break;
+            case "name_asc":
+                sortObj = Sort.by(Sort.Direction.ASC, "fileName");
+                break;
+            case "name_desc":
+                sortObj = Sort.by(Sort.Direction.DESC, "fileName");
+                break;
+            case "newest":
+            default:
+                sortObj = Sort.by(Sort.Direction.DESC, "createdAt");
+                break;
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sortObj);
+        Page<MediaAsset> assets = mediaAssetRepository.searchMediaPublic(safeCategory, safeSearch, pageable);
         
         Page<MediaResponseDTO> result = assets.map(this::toDto);
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Media retrieved successfully", result));

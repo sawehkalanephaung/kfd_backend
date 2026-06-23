@@ -57,6 +57,7 @@ public class ContactSettingsService {
                 .contactEmail(dto.contactEmail())
                 .inquiryTypes(dto.inquiryTypes())
                 .phoneNumbers(dto.phoneNumbers())
+                .officeHours(dto.officeHours())
                 .build();
 
         ContactSettings saved = repository.save(settings);
@@ -75,6 +76,7 @@ public class ContactSettingsService {
         existing.setContactEmail(dto.contactEmail());
         existing.setInquiryTypes(dto.inquiryTypes());
         existing.setPhoneNumbers(dto.phoneNumbers());
+        existing.setOfficeHours(dto.officeHours());
 
         ContactSettings updated = repository.save(existing);
         return ContactSettingsResponseDTO.fromEntity(updated);

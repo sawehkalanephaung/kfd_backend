@@ -38,6 +38,9 @@ public class ContactSettings {
     @Column(name = "phone_numbers", columnDefinition = "jsonb")
     private List<String> phoneNumbers;
 
+    @Column(name = "office_hours")
+    private String officeHours;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

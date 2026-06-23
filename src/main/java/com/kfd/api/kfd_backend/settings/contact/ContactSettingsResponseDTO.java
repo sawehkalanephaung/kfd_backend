@@ -10,6 +10,7 @@ public record ContactSettingsResponseDTO(
         String contactEmail,
         List<String> inquiryTypes,
         List<String> phoneNumbers,
+        String officeHours,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -23,6 +24,7 @@ public record ContactSettingsResponseDTO(
                 settings.getContactEmail(),
                 settings.getInquiryTypes(),
                 settings.getPhoneNumbers(),
+                settings.getOfficeHours(),
                 settings.getCreatedAt(),
                 settings.getUpdatedAt()
         );
