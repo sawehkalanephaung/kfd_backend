@@ -129,11 +129,18 @@ public class AdminMediaController {
                 MediaAsset asset = mediaAssetRepository.findById(id)
                                 .orElseThrow(() -> new ResourceNotFoundException("MediaAsset", "id", id));
 
-                // 1. Delete the physical file
-                storageService.delete(asset.getFileUrl());
-
-                // 2. Delete the DB record
+                // 1. Delete the DB record first (ensures no FK constraints are violated before losing the file)
                 mediaAssetRepository.delete(asset);
+
+                // 2. Delete the physical file
+                if (asset.getFileUrl() != null) {
+                        try {
+                                storageService.delete(asset.getFileUrl());
+                        } catch (Exception e) {
+                                // Log error but don't fail the request since DB record is already deleted
+                                e.printStackTrace();
+                        }
+                }
 
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                                 new ApiMessageResponse(HttpStatus.NO_CONTENT.value(), "File deleted successfully"));

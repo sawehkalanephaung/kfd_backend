@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,5 +17,6 @@ public class PageRequestDTO {
     private String title;
     private String content;
     private UUID heroImageId;
+    private List<UUID> sliderImageIds;
     private String status;
 }

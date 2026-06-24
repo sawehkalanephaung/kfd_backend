@@ -3,9 +3,13 @@ package com.kfd.api.kfd_backend.page;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import org.hibernate.type.SqlTypes;
+
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -32,6 +36,10 @@ public class Page {
 
     @Column(name = "hero_image_id")
     private UUID heroImageId;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "slider_image_ids", columnDefinition = "jsonb")
+    private List<UUID> sliderImageIds;
 
     @Builder.Default
     @Column(length = 50)

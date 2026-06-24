@@ -15,6 +15,12 @@ import org.springframework.data.repository.query.Param;
 @Repository
 public interface PostRepository extends JpaRepository<Post, UUID> {
     // findAll(Pageable) is provided by the JpaRepository base interface
+    
+    @Query("SELECT p FROM Post p WHERE " +
+           "(:search IS NULL OR :search = '' OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
+           "(:category IS NULL OR :category = '' OR p.category.name = :category)")
+    Page<Post> searchAdminPosts(@Param("search") String search, @Param("category") String category, Pageable pageable);
+
     boolean existsBySlug(String slug);
 
     @Query("SELECT COUNT(p) > 0 FROM Post p JOIN p.tags t WHERE t.id = :tagId")

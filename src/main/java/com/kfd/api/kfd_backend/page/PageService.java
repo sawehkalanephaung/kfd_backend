@@ -9,6 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+
 import com.kfd.api.kfd_backend.media.MediaAssetRepository;
 import com.kfd.api.kfd_backend.media.MediaAsset;
 
@@ -27,6 +31,14 @@ public class PageService {
                     .orElse(null);
         }
 
+        List<String> sliderImageUrls = new ArrayList<>();
+        if (p.getSliderImageIds() != null && !p.getSliderImageIds().isEmpty()) {
+            sliderImageUrls = mediaAssetRepository.findAllById(p.getSliderImageIds())
+                    .stream()
+                    .map(MediaAsset::getFileUrl)
+                    .collect(Collectors.toList());
+        }
+
         return PageResponseDTO.builder()
                 .id(p.getId())
                 .slug(p.getSlug())
@@ -34,6 +46,8 @@ public class PageService {
                 .content(p.getContent())
                 .heroImageId(p.getHeroImageId())
                 .heroImageUrl(heroImageUrl)
+                .sliderImageIds(p.getSliderImageIds())
+                .sliderImageUrls(sliderImageUrls)
                 .status(p.getStatus())
                 .createdBy(p.getCreatedBy())
                 .lastUpdatedBy(p.getLastUpdatedBy())
@@ -62,6 +76,7 @@ public class PageService {
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .heroImageId(dto.getHeroImageId())
+                .sliderImageIds(dto.getSliderImageIds())
                 .status(dto.getStatus() != null ? dto.getStatus() : "DRAFT")
                 .createdBy(currentUserId)
                 .lastUpdatedBy(currentUserId)
@@ -76,6 +91,7 @@ public class PageService {
         page.setTitle(dto.getTitle());
         page.setContent(dto.getContent());
         page.setHeroImageId(dto.getHeroImageId());
+        page.setSliderImageIds(dto.getSliderImageIds());
         if (dto.getStatus() != null) page.setStatus(dto.getStatus());
         page.setLastUpdatedBy(currentUserId);
         return toDto(pageRepository.save(page));

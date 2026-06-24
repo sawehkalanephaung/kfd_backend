@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -19,6 +20,8 @@ public class PageResponseDTO {
     private String content;
     private UUID heroImageId;
     private String heroImageUrl;
+    private List<UUID> sliderImageIds;
+    private List<String> sliderImageUrls;
     private String status;
     private UUID createdBy;
     private UUID lastUpdatedBy;

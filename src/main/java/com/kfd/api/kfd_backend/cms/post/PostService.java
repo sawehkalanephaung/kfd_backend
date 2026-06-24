@@ -94,11 +94,11 @@ public class PostService {
 
     /**
      * Returns a paginated list of all posts (DRAFT, PUBLISHED, ARCHIVED)
-     * for the admin dashboard.
-     * Usage: GET /api/v1/admin/cms/posts?page=0&size=10
+     * for the admin dashboard, with optional filtering.
+     * Usage: GET /api/v1/admin/cms/posts?page=0&size=10&search=xyz&category=abc
      */
-    public Page<PostResponseDto> getAllPosts(Pageable pageable) {
-        return postRepository.findAll(pageable).map(this::toResponseDto);
+    public Page<PostResponseDto> getAllPosts(String search, String category, Pageable pageable) {
+        return postRepository.searchAdminPosts(search, category, pageable).map(this::toResponseDto);
     }
 
     public PostResponseDto getPostById(UUID id) {

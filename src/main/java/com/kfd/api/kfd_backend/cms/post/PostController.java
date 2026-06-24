@@ -20,13 +20,15 @@ public class PostController {
     private final PostService postService;
 
     /**
-     * GET /api/v1/admin/cms/posts?page=0&size=10
+     * GET /api/v1/admin/cms/posts?page=0&size=10&search=xyz&category=abc
      * Returns all posts (DRAFT, PUBLISHED, ARCHIVED) paginated for the admin table.
      */
     @GetMapping
     public ResponseEntity<Page<PostResponseDto>> getAllPosts(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category,
             @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
-        return ResponseEntity.ok(postService.getAllPosts(pageable));
+        return ResponseEntity.ok(postService.getAllPosts(search, category, pageable));
     }
 
     /**

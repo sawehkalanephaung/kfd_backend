@@ -21,6 +21,8 @@ services:
     container_name: kfd-backend
     ports:
       - "8080:8080"
+    volumes:
+      - kfd_uploads_data:/app/uploads
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
@@ -35,3 +37,4 @@ services:
 
 volumes:
   kfd_postgres_data:
+  kfd_uploads_data:
