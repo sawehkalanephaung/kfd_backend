@@ -83,6 +83,7 @@ public class PublicPostController {
                 .publishedAt(post.getPublishedAt())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
+                .metadata(post.getMetadata())
                 .relatedPosts(related)
                 .build();
 
@@ -125,6 +126,7 @@ public class PublicPostController {
                 .publishedAt(post.getPublishedAt())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
+                .metadata(post.getMetadata())
                 .build();
     }
 }

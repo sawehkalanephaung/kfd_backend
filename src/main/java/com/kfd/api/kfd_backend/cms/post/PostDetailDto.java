@@ -34,6 +34,7 @@ public class PostDetailDto {
     private OffsetDateTime publishedAt;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private java.util.Map<String, Object> metadata;
     /** Related posts in the same category (max 3) */
     private List<PostResponseDto> relatedPosts;
 }

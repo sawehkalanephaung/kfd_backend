@@ -82,6 +82,10 @@ public class Post {
     @Column(name = "last_updated_by")
     private UUID lastUpdatedBy;
 
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private java.util.Map<String, Object> metadata;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;

@@ -70,8 +70,11 @@ public class AdminMediaController {
         }
 
         @GetMapping
-        public ResponseEntity<Page<MediaResponseDTO>> getAllMedia(Pageable pageable) {
-                Page<MediaResponseDTO> page = mediaAssetRepository.findAll(pageable).map(this::toDto);
+        public ResponseEntity<Page<MediaResponseDTO>> getAllMedia(
+                        @RequestParam(required = false) String search,
+                        @RequestParam(required = false) String category,
+                        @org.springframework.data.web.PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
+                Page<MediaResponseDTO> page = mediaAssetRepository.searchMediaPublic(category, search, pageable).map(this::toDto);
                 return ResponseEntity.ok(page);
         }
 

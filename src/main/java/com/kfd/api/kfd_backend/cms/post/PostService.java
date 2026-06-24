@@ -69,6 +69,7 @@ public class PostService {
                 .publishedAt(post.getPublishedAt())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
+                .metadata(post.getMetadata())
                 .build();
     }
 
@@ -121,6 +122,7 @@ public class PostService {
                 .authorId(MOCK_ADMIN_ID)
                 .category(resolveCategory(dto.getCategoryId()))
                 .tags(resolveTags(dto.getTagIds()))
+                .metadata(dto.getMetadata())
                 .status(dto.getStatus() != null ? dto.getStatus() : PostStatus.DRAFT)
                 .publishedAt(dto.getStatus() == PostStatus.PUBLISHED ? now : null)
                 .createdBy(MOCK_ADMIN_ID)
@@ -148,6 +150,7 @@ public class PostService {
         post.setCategory(resolveCategory(dto.getCategoryId()));
         post.getTags().clear();
         post.getTags().addAll(resolveTags(dto.getTagIds()));
+        if (dto.getMetadata() != null) post.setMetadata(dto.getMetadata());
         post.setLastUpdatedBy(MOCK_ADMIN_ID);
 
         if (dto.getStatus() != null) {

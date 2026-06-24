@@ -18,8 +18,8 @@ public interface MediaAssetRepository extends JpaRepository<MediaAsset, UUID> {
     // ── Public API queries ──────────────────────────────────────
 
     @Query("SELECT m FROM MediaAsset m WHERE " +
-           "(:category = '' OR m.mediaCategory = :category) AND " +
-           "(:search = '' OR LOWER(m.fileName) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "(:category IS NULL OR :category = '' OR m.mediaCategory = :category) AND " +
+           "(:search IS NULL OR :search = '' OR LOWER(m.fileName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<MediaAsset> searchMediaPublic(@Param("category") String category, @Param("search") String search, Pageable pageable);
 
     @Query("SELECT new map(m.mediaCategory as category, COUNT(m) as count) FROM MediaAsset m GROUP BY m.mediaCategory")

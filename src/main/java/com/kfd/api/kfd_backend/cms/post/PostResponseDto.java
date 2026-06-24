@@ -35,4 +35,5 @@ public class PostResponseDto {
     private OffsetDateTime publishedAt;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private java.util.Map<String, Object> metadata;
 }

@@ -23,6 +23,9 @@ public class PostRequestDto {
     private String content;
     private String featuredImageUrl;
     private UUID categoryId;
+    private UUID lastUpdatedBy;
+
+    private java.util.Map<String, Object> metadata;
     private List<UUID> tagIds;
     private PostStatus status;
 }
