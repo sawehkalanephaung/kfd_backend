@@ -1,6 +1,9 @@
 package com.kfd.api.kfd_backend.settings.contact;
 
+import com.kfd.api.kfd_backend.audit.AuditHelper;
+import com.kfd.api.kfd_backend.audit.AuditLogService;
 import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,8 @@ import java.util.UUID;
 public class AdminContactSettingsController {
 
     private final ContactSettingsService contactSettingsService;
+    private final AuditLogService auditLogService;
+    private final AuditHelper auditHelper;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
@@ -33,22 +38,31 @@ public class AdminContactSettingsController {
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ContactSettingsResponseDTO> createSettings(
-            @Valid @RequestBody ContactSettingsRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(contactSettingsService.createSettings(dto));
+            @Valid @RequestBody ContactSettingsRequestDTO dto,
+            HttpServletRequest request) {
+        ContactSettingsResponseDTO created = contactSettingsService.createSettings(dto);
+        auditLogService.log(auditHelper.getCurrentUserId(), "CREATE", "CONTACT_SETTINGS", created.id(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ContactSettingsResponseDTO> updateSettings(
             @PathVariable UUID id,
-            @Valid @RequestBody ContactSettingsRequestDTO dto) {
-        return ResponseEntity.ok(contactSettingsService.updateSettings(id, dto));
+            @Valid @RequestBody ContactSettingsRequestDTO dto,
+            HttpServletRequest request) {
+        ContactSettingsResponseDTO updated = contactSettingsService.updateSettings(id, dto);
+        auditLogService.log(auditHelper.getCurrentUserId(), "UPDATE", "CONTACT_SETTINGS", id, request);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<ApiMessageResponse> deleteSettings(@PathVariable UUID id) {
+    public ResponseEntity<ApiMessageResponse> deleteSettings(
+            @PathVariable UUID id,
+            HttpServletRequest request) {
         contactSettingsService.deleteSettings(id);
+        auditLogService.log(auditHelper.getCurrentUserId(), "DELETE", "CONTACT_SETTINGS", id, request);
         return ResponseEntity.ok(new ApiMessageResponse(200, "Contact settings deleted successfully."));
     }
 }

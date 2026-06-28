@@ -1,5 +1,6 @@
 package com.kfd.api.kfd_backend.cms.post;
 
+import com.kfd.api.kfd_backend.audit.AuditHelper;
 import com.kfd.api.kfd_backend.cms.category.PostCategory;
 import com.kfd.api.kfd_backend.cms.category.PostCategoryDto;
 import com.kfd.api.kfd_backend.cms.category.PostCategoryRepository;
@@ -27,10 +28,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostCategoryRepository categoryRepository;
     private final TagRepository tagRepository;
-
-    // ── Placeholder admin ID until Spring Security is wired ──
-    private static final UUID MOCK_ADMIN_ID =
-            UUID.fromString("d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80");
+    private final AuditHelper auditHelper;
 
     // ── Mapper ────────────────────────────────────────────────
 
@@ -112,6 +110,7 @@ public class PostService {
             throw new DuplicateResourceException("Post", "slug", dto.getSlug());
         }
 
+        UUID currentUserId = auditHelper.getCurrentUserId();
         OffsetDateTime now = OffsetDateTime.now();
         Post post = Post.builder()
                 .title(dto.getTitle())
@@ -119,14 +118,14 @@ public class PostService {
                 .excerpt(dto.getExcerpt())
                 .content(dto.getContent())
                 .featuredImageUrl(dto.getFeaturedImageUrl())
-                .authorId(MOCK_ADMIN_ID)
+                .authorId(currentUserId)
                 .category(resolveCategory(dto.getCategoryId()))
                 .tags(resolveTags(dto.getTagIds()))
                 .metadata(dto.getMetadata())
                 .status(dto.getStatus() != null ? dto.getStatus() : PostStatus.DRAFT)
                 .publishedAt(dto.getStatus() == PostStatus.PUBLISHED ? now : null)
-                .createdBy(MOCK_ADMIN_ID)
-                .lastUpdatedBy(MOCK_ADMIN_ID)
+                .createdBy(currentUserId)
+                .lastUpdatedBy(currentUserId)
                 .build();
 
         return toResponseDto(postRepository.save(post));
@@ -151,7 +150,7 @@ public class PostService {
         post.getTags().clear();
         post.getTags().addAll(resolveTags(dto.getTagIds()));
         if (dto.getMetadata() != null) post.setMetadata(dto.getMetadata());
-        post.setLastUpdatedBy(MOCK_ADMIN_ID);
+        post.setLastUpdatedBy(auditHelper.getCurrentUserId());
 
         if (dto.getStatus() != null) {
             // Set publishedAt timestamp the first time status transitions to PUBLISHED
@@ -177,7 +176,7 @@ public class PostService {
             return true;
         } else {
             post.setStatus(PostStatus.ARCHIVED);
-            post.setLastUpdatedBy(MOCK_ADMIN_ID);
+            post.setLastUpdatedBy(auditHelper.getCurrentUserId());
             postRepository.save(post);
             return false;
         }

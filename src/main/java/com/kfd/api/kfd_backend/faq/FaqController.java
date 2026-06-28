@@ -1,43 +1,59 @@
 package com.kfd.api.kfd_backend.faq;
 
-import lombok.RequiredArgsConstructor;
-import java.util.List;
+import com.kfd.api.kfd_backend.audit.AuditHelper;
+import com.kfd.api.kfd_backend.audit.AuditLogService;
 import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
 import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/faqs")
 @RequiredArgsConstructor
 public class FaqController {
-    private final FaqService faqService;
 
-    // public endpoint: Fetch publiched FAQs
+    private final FaqService faqService;
+    private final AuditLogService auditLogService;
+    private final AuditHelper auditHelper;
+
+    // ─── Public Endpoints ─────────────────────────────────────────────────────
+
+    /** Public endpoint: fetch only published FAQs */
     @GetMapping
     public ResponseEntity<List<FaqDto>> getPublishedFaqs() {
         return ResponseEntity.ok(faqService.getPublicFaqs());
     }
 
-    // Admin endpoint: Fetch all FAQs (including drafts)
+    // ─── Admin Endpoints ──────────────────────────────────────────────────────
+
+    /** Admin endpoint: fetch all FAQs (including drafts) */
     @GetMapping("/admin")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<List<Faq>> getAllFaqs() {
         return ResponseEntity.ok(faqService.getAllFaqs());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<Faq> getFaqById(@PathVariable UUID id) {
         return ResponseEntity.ok(faqService.getFaqById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ApiDataResponse<Faq>> createFaq(@RequestBody FaqDto dto) {
-        // Placeholder User ID until Authentication feature is implemented
-        UUID mockAdminId = UUID.fromString("d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80");
-        Faq created = faqService.createFaq(dto, mockAdminId);
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    public ResponseEntity<ApiDataResponse<Faq>> createFaq(
+            @RequestBody FaqDto dto,
+            HttpServletRequest request) {
+        UUID currentUserId = auditHelper.getCurrentUserId();
+        Faq created = faqService.createFaq(dto, currentUserId);
+        auditLogService.log(currentUserId, "CREATE", "FAQ", created.getId(), request);
         ApiDataResponse<Faq> response = new ApiDataResponse<>(
                 HttpStatus.CREATED.value(),
                 String.format("FAQ '%s' was successfully created.", created.getId()),
@@ -46,9 +62,14 @@ public class FaqController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiDataResponse<Faq>> updateFaq(@PathVariable UUID id, @RequestBody FaqDto dto) {
-        UUID mockAdminId = UUID.fromString("d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80");
-        Faq updated = faqService.updateFaq(id, dto, mockAdminId);
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    public ResponseEntity<ApiDataResponse<Faq>> updateFaq(
+            @PathVariable UUID id,
+            @RequestBody FaqDto dto,
+            HttpServletRequest request) {
+        UUID currentUserId = auditHelper.getCurrentUserId();
+        Faq updated = faqService.updateFaq(id, dto, currentUserId);
+        auditLogService.log(currentUserId, "UPDATE", "FAQ", id, request);
         ApiDataResponse<Faq> response = new ApiDataResponse<>(
                 HttpStatus.OK.value(),
                 String.format("FAQ '%s' was successfully updated.", updated.getId()),
@@ -57,11 +78,15 @@ public class FaqController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiMessageResponse> deleteFaq(@PathVariable UUID id) {
+    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    public ResponseEntity<ApiMessageResponse> deleteFaq(
+            @PathVariable UUID id,
+            HttpServletRequest request) {
         faqService.deleteFaq(id);
+        auditLogService.log(auditHelper.getCurrentUserId(), "DELETE", "FAQ", id, request);
         ApiMessageResponse response = new ApiMessageResponse(
                 HttpStatus.OK.value(),
                 String.format("FAQ '%s' was successfully deleted.", id));
         return ResponseEntity.ok(response);
     }
-} // end of class
+}

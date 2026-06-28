@@ -1,7 +1,10 @@
 package com.kfd.api.kfd_backend.role;
 
+import com.kfd.api.kfd_backend.audit.AuditHelper;
+import com.kfd.api.kfd_backend.audit.AuditLogService;
 import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
 import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,8 @@ import java.util.UUID;
 public class AdminRoleController {
 
     private final RoleService roleService;
+    private final AuditLogService auditLogService;
+    private final AuditHelper auditHelper;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
@@ -34,25 +39,34 @@ public class AdminRoleController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
-    public ResponseEntity<ApiDataResponse<RoleResponseDTO>> createRole(@RequestBody RoleRequestDTO requestDTO) {
+    public ResponseEntity<ApiDataResponse<RoleResponseDTO>> createRole(
+            @RequestBody RoleRequestDTO requestDTO,
+            HttpServletRequest request) {
         RoleResponseDTO createdRole = roleService.createRole(requestDTO);
+        auditLogService.log(auditHelper.getCurrentUserId(), "CREATE", "ROLE", createdRole.getId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ApiDataResponse<>(HttpStatus.CREATED.value(), "Role created successfully", createdRole));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
-    public ResponseEntity<ApiDataResponse<RoleResponseDTO>> updateRole(@PathVariable UUID id,
-            @RequestBody RoleRequestDTO requestDTO) {
+    public ResponseEntity<ApiDataResponse<RoleResponseDTO>> updateRole(
+            @PathVariable UUID id,
+            @RequestBody RoleRequestDTO requestDTO,
+            HttpServletRequest request) {
         RoleResponseDTO updatedRole = roleService.updateRole(id, requestDTO);
+        auditLogService.log(auditHelper.getCurrentUserId(), "UPDATE", "ROLE", id, request);
         return ResponseEntity
                 .ok(new ApiDataResponse<>(HttpStatus.OK.value(), "Role updated successfully", updatedRole));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
-    public ResponseEntity<ApiMessageResponse> deleteRole(@PathVariable UUID id) {
+    public ResponseEntity<ApiMessageResponse> deleteRole(
+            @PathVariable UUID id,
+            HttpServletRequest request) {
         roleService.deleteRole(id);
+        auditLogService.log(auditHelper.getCurrentUserId(), "DELETE", "ROLE", id, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                 new ApiMessageResponse(HttpStatus.NO_CONTENT.value(), "Role deleted successfully"));
     }

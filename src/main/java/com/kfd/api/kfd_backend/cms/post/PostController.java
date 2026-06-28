@@ -1,7 +1,10 @@
 package com.kfd.api.kfd_backend.cms.post;
 
+import com.kfd.api.kfd_backend.audit.AuditHelper;
+import com.kfd.api.kfd_backend.audit.AuditLogService;
 import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
 import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +21,8 @@ import java.util.UUID;
 public class PostController {
 
     private final PostService postService;
+    private final AuditLogService auditLogService;
+    private final AuditHelper auditHelper;
 
     /**
      * GET /api/v1/admin/cms/posts?page=0&size=10&search=xyz&category=abc
@@ -45,8 +50,11 @@ public class PostController {
      * Creates a new post. Defaults to DRAFT if no status is provided.
      */
     @PostMapping
-    public ResponseEntity<ApiDataResponse<PostResponseDto>> createPost(@RequestBody PostRequestDto dto) {
+    public ResponseEntity<ApiDataResponse<PostResponseDto>> createPost(
+            @RequestBody PostRequestDto dto,
+            HttpServletRequest request) {
         PostResponseDto created = postService.createPost(dto);
+        auditLogService.log(auditHelper.getCurrentUserId(), "CREATE", "POST", created.getId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ApiDataResponse<>(
                         HttpStatus.CREATED.value(),
@@ -60,8 +68,11 @@ public class PostController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ApiDataResponse<PostResponseDto>> updatePost(
-            @PathVariable UUID id, @RequestBody PostRequestDto dto) {
+            @PathVariable UUID id,
+            @RequestBody PostRequestDto dto,
+            HttpServletRequest request) {
         PostResponseDto updated = postService.updatePost(id, dto);
+        auditLogService.log(auditHelper.getCurrentUserId(), "UPDATE", "POST", id, request);
         return ResponseEntity.ok(
                 new ApiDataResponse<>(
                         HttpStatus.OK.value(),
@@ -75,11 +86,15 @@ public class PostController {
      * If the post is already ARCHIVED, permanently hard-deletes it.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiMessageResponse> deleteOrArchivePost(@PathVariable UUID id) {
+    public ResponseEntity<ApiMessageResponse> deleteOrArchivePost(
+            @PathVariable UUID id,
+            HttpServletRequest request) {
         boolean isPermanentlyDeleted = postService.deleteOrArchivePost(id);
+        String actionType = isPermanentlyDeleted ? "DELETE" : "ARCHIVE";
         String message = isPermanentlyDeleted
                 ? String.format("Post with ID '%s' was permanently deleted.", id)
                 : String.format("Post with ID '%s' was successfully archived.", id);
+        auditLogService.log(auditHelper.getCurrentUserId(), actionType, "POST", id, request);
         return ResponseEntity.ok(new ApiMessageResponse(HttpStatus.OK.value(), message));
     }
 }

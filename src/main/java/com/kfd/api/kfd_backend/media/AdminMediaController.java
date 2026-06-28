@@ -1,8 +1,11 @@
 package com.kfd.api.kfd_backend.media;
 
+import com.kfd.api.kfd_backend.audit.AuditHelper;
+import com.kfd.api.kfd_backend.audit.AuditLogService;
 import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
 import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
 import com.kfd.api.kfd_backend.global.exception.ResourceNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +23,8 @@ public class AdminMediaController {
 
         private final MediaAssetRepository mediaAssetRepository;
         private final StorageService storageService;
+        private final AuditLogService auditLogService;
+        private final AuditHelper auditHelper;
 
         private MediaResponseDTO toDto(MediaAsset asset) {
                 return MediaResponseDTO.builder()
@@ -40,7 +45,8 @@ public class AdminMediaController {
         public ResponseEntity<ApiDataResponse<MediaResponseDTO>> uploadFile(
                         @RequestParam("file") MultipartFile file,
                         @RequestParam(value = "category", required = false, defaultValue = "general") String category,
-                        @RequestParam(value = "departmentId", required = false) UUID departmentId) {
+                        @RequestParam(value = "departmentId", required = false) UUID departmentId,
+                        HttpServletRequest request) {
 
                 // 1. Store the file physically
                 String fileUrl = storageService.upload(file);
@@ -52,15 +58,16 @@ public class AdminMediaController {
                                 .fileType(file.getContentType())
                                 .fileSizeKb((int) (file.getSize() / 1024))
                                 .mediaCategory(category)
-                                .language("English") // Default language or take from param
+                                .language("English")
                                 .departmentId(departmentId)
-                                // uploadedBy is now populated automatically via JPA Auditing +
-                                // SecurityContextHolder
                                 .build();
 
                 MediaAsset savedAsset = mediaAssetRepository.save(asset);
 
-                // 3. Return DTO
+                // 3. Audit log
+                auditLogService.log(auditHelper.getCurrentUserId(), "UPLOAD", "MEDIA", savedAsset.getId(), request);
+
+                // 4. Return DTO
                 MediaResponseDTO dto = toDto(savedAsset);
                 return ResponseEntity.status(HttpStatus.CREATED).body(
                                 new ApiDataResponse<>(
@@ -94,7 +101,8 @@ public class AdminMediaController {
                         @PathVariable UUID id,
                         @RequestParam(value = "category", required = false) String category,
                         @RequestParam(value = "departmentId", required = false) UUID departmentId,
-                        @RequestParam(value = "file", required = false) MultipartFile file) {
+                        @RequestParam(value = "file", required = false) MultipartFile file,
+                        HttpServletRequest request) {
                 MediaAsset asset = mediaAssetRepository.findById(id)
                                 .orElseThrow(() -> new ResourceNotFoundException("MediaAsset", "id", id));
 
@@ -102,17 +110,12 @@ public class AdminMediaController {
                         asset.setMediaCategory(category);
                 if (departmentId != null)
                         asset.setDepartmentId(departmentId);
-                        
+
                 if (file != null && !file.isEmpty()) {
-                        // Delete old file
                         if (asset.getFileUrl() != null) {
                                 storageService.delete(asset.getFileUrl());
                         }
-                        
-                        // Upload new file
                         String newFileUrl = storageService.upload(file);
-                        
-                        // Update asset metadata
                         asset.setFileName(file.getOriginalFilename());
                         asset.setFileUrl(newFileUrl);
                         asset.setFileType(file.getContentType());
@@ -120,6 +123,7 @@ public class AdminMediaController {
                 }
 
                 MediaAsset updatedAsset = mediaAssetRepository.save(asset);
+                auditLogService.log(auditHelper.getCurrentUserId(), "UPDATE", "MEDIA", id, request);
                 return ResponseEntity.ok(
                                 new ApiDataResponse<>(
                                                 HttpStatus.OK.value(),
@@ -128,14 +132,19 @@ public class AdminMediaController {
         }
 
         @DeleteMapping("/{id}")
-        public ResponseEntity<ApiMessageResponse> deleteMedia(@PathVariable UUID id) {
+        public ResponseEntity<ApiMessageResponse> deleteMedia(
+                        @PathVariable UUID id,
+                        HttpServletRequest request) {
                 MediaAsset asset = mediaAssetRepository.findById(id)
                                 .orElseThrow(() -> new ResourceNotFoundException("MediaAsset", "id", id));
 
-                // 1. Delete the DB record first (ensures no FK constraints are violated before losing the file)
+                // 1. Delete the DB record first
                 mediaAssetRepository.delete(asset);
 
-                // 2. Delete the physical file
+                // 2. Audit log (before physical delete so ID is preserved in log)
+                auditLogService.log(auditHelper.getCurrentUserId(), "DELETE", "MEDIA", id, request);
+
+                // 3. Delete the physical file
                 if (asset.getFileUrl() != null) {
                         try {
                                 storageService.delete(asset.getFileUrl());

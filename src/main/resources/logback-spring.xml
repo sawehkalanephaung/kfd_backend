@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         KFD Backend – Logback Configuration
+         ─ Console  : colored, human-readable (all environments)
+         ─ App file : logs/kfd-app.log  (rolling daily, 30-day retention)
+         ─ Audit    : logs/kfd-audit.log (audit events only, 90-day retention)
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <property name="LOG_DIR"       value="logs" />
+    <property name="APP_LOG_FILE"  value="${LOG_DIR}/kfd-app.log" />
+    <property name="AUDIT_LOG_FILE" value="${LOG_DIR}/kfd-audit.log" />
+
+    <!-- ─── Console Appender ─────────────────────────────────────────── -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%cyan(%d{yyyy-MM-dd HH:mm:ss}) %highlight(%-5level) %magenta([%thread]) %yellow(%logger{36}) - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ─── Rolling Application Log (all levels, all loggers) ────────── -->
+    <appender name="APP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Roll over daily; keep 30 days -->
+            <fileNamePattern>${LOG_DIR}/kfd-app.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ─── Dedicated Audit Log (AUDIT logger only) ───────────────────── -->
+    <appender name="AUDIT_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${AUDIT_LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Roll over daily; keep 90 days for compliance -->
+            <fileNamePattern>${LOG_DIR}/kfd-audit.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>200MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <!-- Structured pipe-delimited format for easy parsing / ingestion into ELK -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | AUDIT | %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- Only accept messages from the AUDIT logger -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- ─── Spring Boot profile-specific log levels ──────────────────── -->
+
+    <!-- Reduce noise from Spring internals -->
+    <logger name="org.springframework"             level="WARN" />
+    <logger name="org.hibernate.SQL"               level="WARN" />
+    <logger name="org.hibernate.type"              level="WARN" />
+    <logger name="org.flywaydb"                    level="INFO" />
+
+    <!-- KFD application: DEBUG in dev, INFO in prod -->
+    <springProfile name="dev,default">
+        <logger name="com.kfd" level="DEBUG" />
+    </springProfile>
+    <springProfile name="prod">
+        <logger name="com.kfd" level="INFO" />
+    </springProfile>
+
+    <!-- AUDIT logger → only goes to AUDIT_FILE + CONSOLE, not to APP_FILE -->
+    <logger name="AUDIT" level="INFO" additivity="false">
+        <appender-ref ref="AUDIT_FILE" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <!-- ─── Root Logger ──────────────────────────────────────────────── -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="APP_FILE" />
+    </root>
+
+</configuration>

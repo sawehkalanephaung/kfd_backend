@@ -24,6 +24,9 @@ public class AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
 
+    /** Dedicated audit logger — routes to kfd-audit.log via logback-spring.xml */
+    private static final org.slf4j.Logger AUDIT_LOG = org.slf4j.LoggerFactory.getLogger("AUDIT");
+
     /**
      * Logs any action asynchronously.
      *
@@ -36,15 +39,22 @@ public class AuditLogService {
     @Async
     public void log(UUID userId, String actionType, String entityType, UUID entityId, HttpServletRequest request) {
         try {
+            String ip = extractIp(request);
+            String ua = extractUserAgent(request);
+
             AuditLog entry = AuditLog.builder()
                     .userId(userId)
                     .actionType(actionType)
                     .entityType(entityType)
                     .entityId(entityId)
-                    .ipAddress(extractIp(request))
-                    .userAgent(extractUserAgent(request))
+                    .ipAddress(ip)
+                    .userAgent(ua)
                     .build();
             auditLogRepository.save(entry);
+
+            // Emit structured audit log line to kfd-audit.log
+            AUDIT_LOG.info("action={} | entity={} | entityId={} | userId={} | ip={}",
+                    actionType, entityType, entityId, userId, ip);
         } catch (Exception e) {
             // Audit logging must NEVER crash the main request — only log the error.
             log.error("Failed to write audit log entry: action={}, entity={}, id={}, error={}",
@@ -58,6 +68,20 @@ public class AuditLogService {
     @Async
     public void log(UUID userId, String actionType, String entityType, HttpServletRequest request) {
         log(userId, actionType, entityType, null, request);
+    }
+
+    /**
+     * Overload for public/anonymous events where there is no HttpServletRequest
+     * available (e.g. inquiry submissions logged via SLF4J only).
+     * This variant does NOT persist to the DB — it only writes to the audit log file.
+     *
+     * @param actionType  e.g. SUBMIT
+     * @param entityType  e.g. INQUIRY
+     * @param description Free-text detail (e.g. sender email, inquiry type)
+     */
+    public void logAnonymous(String actionType, String entityType, String description) {
+        AUDIT_LOG.info("action={} | entity={} | userId=anonymous | detail={}",
+                actionType, entityType, description);
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────────
