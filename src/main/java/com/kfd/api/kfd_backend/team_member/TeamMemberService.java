@@ -44,6 +44,7 @@ public class TeamMemberService {
                 .headshotUrl(dto.getHeadshotUrl())
                 .displayOrder(dto.getDisplayOrder() != null ? dto.getDisplayOrder() : 0)
                 .isActive(dto.getIsActive() != null ? dto.getIsActive() : true)
+                .isKfdChairman(dto.getIsKfdChairman() != null ? dto.getIsKfdChairman() : false)
                 .createdBy(currentUserId)
                 .lastUpdatedBy(currentUserId)
                 .build();
@@ -61,6 +62,7 @@ public class TeamMemberService {
         member.setHeadshotUrl(dto.getHeadshotUrl());
         member.setDisplayOrder(dto.getDisplayOrder());
         member.setIsActive(dto.getIsActive());
+        member.setIsKfdChairman(dto.getIsKfdChairman());
         member.setLastUpdatedBy(currentUserId);
         return toDto(teamMemberRepository.save(member));
     }
@@ -82,6 +84,7 @@ public class TeamMemberService {
                 .headshotUrl(m.getHeadshotUrl())
                 .displayOrder(m.getDisplayOrder())
                 .isActive(m.getIsActive())
+                .isKfdChairman(m.getIsKfdChairman())
                 .build();
     }
 

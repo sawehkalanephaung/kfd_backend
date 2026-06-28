@@ -69,6 +69,7 @@ public class DepartmentService {
                 .excerpt(p.getExcerpt())
                 .featuredImageUrl(p.getFeaturedImageUrl())
                 .status(p.getStatus() != null ? p.getStatus().name() : null)
+                .categoryName(p.getCategory() != null ? p.getCategory().getName() : null)
                 .publishedAt(p.getPublishedAt())
                 .build();
     }
@@ -117,7 +118,10 @@ public class DepartmentService {
 
         List<PostSummaryDTO> posts = postRepository
                 .findByDepartmentIdOrderByPublishedAtDesc(d.getId())
-                .stream().map(this::toPostSummary).collect(Collectors.toList());
+                .stream()
+                .filter(p -> p.getStatus() != null && "PUBLISHED".equals(p.getStatus().name()))
+                .map(this::toPostSummary)
+                .collect(Collectors.toList());
 
         List<DepartmentTimelineEventDTO> timeline = departmentTimelineEventRepository
                 .findByDepartmentIdOrderByOrderIndexAsc(d.getId())
@@ -127,6 +131,20 @@ public class DepartmentService {
                 .findByDepartmentId(d.getId())
                 .stream().map(this::toMediaDto).collect(Collectors.toList());
 
+        String logoUrl = null;
+        if (d.getLogoId() != null) {
+            logoUrl = mediaAssetRepository.findById(d.getLogoId())
+                    .map(com.kfd.api.kfd_backend.media.MediaAsset::getFileUrl)
+                    .orElse(null);
+        }
+
+        String heroImageUrl = null;
+        if (d.getHeroImageId() != null) {
+            heroImageUrl = mediaAssetRepository.findById(d.getHeroImageId())
+                    .map(com.kfd.api.kfd_backend.media.MediaAsset::getFileUrl)
+                    .orElse(null);
+        }
+
         return DepartmentPublicResponseDTO.builder()
                 .id(d.getId())
                 .slug(d.getSlug())
@@ -134,7 +152,9 @@ public class DepartmentService {
                 .headMember(toTeamMemberSummary(d.getHeadMember()))
                 .bodyContent(d.getBodyContent())
                 .logoId(d.getLogoId())
+                .logoUrl(logoUrl)
                 .heroImageId(d.getHeroImageId())
+                .heroImageUrl(heroImageUrl)
                 .status(d.getStatus())
                 .orderIndex(d.getOrderIndex())
                 .contacts(contacts)

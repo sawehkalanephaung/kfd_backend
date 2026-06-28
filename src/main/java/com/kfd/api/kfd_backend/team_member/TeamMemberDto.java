@@ -22,4 +22,7 @@ public class TeamMemberDto {
     private String headshotUrl;
     private Integer displayOrder;
     private Boolean isActive;
+    
+    @com.fasterxml.jackson.annotation.JsonProperty("isKfdChairman")
+    private Boolean isKfdChairman;
 }

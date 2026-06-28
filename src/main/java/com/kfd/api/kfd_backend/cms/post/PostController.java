@@ -32,8 +32,9 @@ public class PostController {
     public ResponseEntity<Page<PostResponseDto>> getAllPosts(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
             @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
-        return ResponseEntity.ok(postService.getAllPosts(search, category, pageable));
+        return ResponseEntity.ok(postService.getAllPosts(search, category, status, pageable));
     }
 
     /**

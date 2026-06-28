@@ -49,6 +49,10 @@ public class TeamMember {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @Builder.Default
+    @Column(name = "is_kfd_chairman")
+    private Boolean isKfdChairman = false;
+
     @Column(name = "created_by")
     private UUID createdBy;
 

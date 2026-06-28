@@ -26,7 +26,9 @@ public class DepartmentPublicResponseDTO {
     private TeamMemberSummaryDTO headMember;
     private String bodyContent;
     private UUID logoId;
+    private String logoUrl;
     private UUID heroImageId;
+    private String heroImageUrl;
     private String status;
     private Integer orderIndex;
     private List<DepartmentContactResponseDTO> contacts;

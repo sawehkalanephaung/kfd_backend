@@ -788,3 +788,135 @@ Caused by: org.springframework.util.PlaceholderResolutionException: Could not re
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:565)
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
 	... 44 common frames omitted
+2026-06-28 13:58:07 INFO  [main] c.k.api.kfd_backend.MainApplication - Starting MainApplication using Java 26.0.1 with PID 63499 (/Users/mr.saw/Documents/KFD/kfd_backend/target/classes started by mr.saw in /Users/mr.saw/Documents/KFD/kfd_backend)
+2026-06-28 13:58:07 DEBUG [main] c.k.api.kfd_backend.MainApplication - Running with Spring Boot v4.0.6, Spring v7.0.7
+2026-06-28 13:58:07 INFO  [main] c.k.api.kfd_backend.MainApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-28 13:58:07 INFO  [background-preinit] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-06-28 13:58:09 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-06-28 13:58:09 INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-28 13:58:09 INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-28 13:58:10 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-28 13:58:10 INFO  [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6e93b0e7
+2026-06-28 13:58:10 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-28 13:58:10 INFO  [main] org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/postgres (PostgreSQL 18.4)
+2026-06-28 13:58:10 INFO  [main] o.f.core.internal.command.DbValidate - Successfully validated 20 migrations (execution time 00:00.039s)
+2026-06-28 13:58:10 INFO  [main] o.f.core.internal.command.DbMigrate - Current version of schema "public": 21
+2026-06-28 13:58:10 INFO  [main] o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2026-06-28 13:58:10 INFO  [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-06-28 13:58:10 INFO  [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.12.Final
+2026-06-28 13:58:11 INFO  [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/postgres]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: postgres/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-06-28 13:58:12 INFO  [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-28 13:58:13 DEBUG [main] c.k.a.k.auth.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2026-06-28 13:58:13 WARN  [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-06-28 13:58:14 WARN  [main] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-28 13:58:15 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-06-28 13:58:15 WARN  [main] o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-06-28 13:58:15 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-06-28 13:58:15 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-06-28 13:58:15 ERROR [main] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-06-28 22:33:55 INFO  [main] c.k.api.kfd_backend.MainApplication - Starting MainApplication v0.0.1-SNAPSHOT using Java 26.0.1 with PID 86103 (/Users/mr.saw/Documents/KFD/kfd_backend/target/kfd_backend-0.0.1-SNAPSHOT.jar started by mr.saw in /Users/mr.saw/Documents/KFD/kfd_backend)
+2026-06-28 22:33:55 DEBUG [main] c.k.api.kfd_backend.MainApplication - Running with Spring Boot v4.0.6, Spring v7.0.7
+2026-06-28 22:33:55 INFO  [main] c.k.api.kfd_backend.MainApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-28 22:33:56 INFO  [background-preinit] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-06-28 22:33:59 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-06-28 22:33:59 INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-28 22:33:59 INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-28 22:34:00 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-28 22:34:00 INFO  [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5350ab17
+2026-06-28 22:34:00 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-28 22:34:00 INFO  [main] org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/postgres (PostgreSQL 18.4)
+2026-06-28 22:34:00 INFO  [main] o.f.core.internal.command.DbValidate - Successfully validated 21 migrations (execution time 00:00.077s)
+2026-06-28 22:34:01 INFO  [main] o.f.core.internal.command.DbMigrate - Current version of schema "public": 21
+2026-06-28 22:34:01 INFO  [main] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "22 - add is kfd chairman to team members"
+2026-06-28 22:34:01 INFO  [main] o.f.core.internal.command.DbMigrate - Successfully applied 1 migration to schema "public", now at version v22 (execution time 00:00.059s)
+2026-06-28 22:34:01 INFO  [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-06-28 22:34:01 INFO  [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.12.Final
+2026-06-28 22:34:02 INFO  [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/postgres]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: postgres/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-06-28 22:34:04 INFO  [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-28 22:34:05 DEBUG [main] c.k.a.k.auth.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2026-06-28 22:34:05 WARN  [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-06-28 22:34:08 WARN  [main] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-28 22:34:09 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-06-28 22:34:09 INFO  [main] c.k.api.kfd_backend.MainApplication - Started MainApplication in 15.146 seconds (process running for 16.088)
+2026-06-28 22:34:17 INFO  [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-28 22:34:18 WARN  [http-nio-8080-exec-4] o.s.d.w.c.SpringDataJackson3Configuration$PageModule$WarningLoggingModifier - Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2026-06-28 22:41:20 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-06-28 22:41:20 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-06-28 22:42:01 INFO  [main] c.k.api.kfd_backend.MainApplication - Starting MainApplication v0.0.1-SNAPSHOT using Java 26.0.1 with PID 86603 (/Users/mr.saw/Documents/KFD/kfd_backend/target/kfd_backend-0.0.1-SNAPSHOT.jar started by mr.saw in /Users/mr.saw/Documents/KFD/kfd_backend)
+2026-06-28 22:42:01 DEBUG [main] c.k.api.kfd_backend.MainApplication - Running with Spring Boot v4.0.6, Spring v7.0.7
+2026-06-28 22:42:01 INFO  [main] c.k.api.kfd_backend.MainApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-28 22:42:01 INFO  [background-preinit] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-06-28 22:42:05 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-06-28 22:42:05 INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-28 22:42:05 INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-28 22:42:06 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-28 22:42:06 INFO  [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@71ad959b
+2026-06-28 22:42:06 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-28 22:42:07 INFO  [main] org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5432/postgres (PostgreSQL 18.4)
+2026-06-28 22:42:07 INFO  [main] o.f.core.internal.command.DbValidate - Successfully validated 21 migrations (execution time 00:00.186s)
+2026-06-28 22:42:07 INFO  [main] o.f.core.internal.command.DbMigrate - Current version of schema "public": 22
+2026-06-28 22:42:07 INFO  [main] o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2026-06-28 22:42:08 INFO  [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-06-28 22:42:09 INFO  [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.12.Final
+2026-06-28 22:42:10 INFO  [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/postgres]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: postgres/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-06-28 22:42:13 INFO  [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-28 22:42:14 DEBUG [main] c.k.a.k.auth.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2026-06-28 22:42:14 WARN  [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-06-28 22:42:18 WARN  [main] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-28 22:42:19 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-06-28 22:42:19 INFO  [main] c.k.api.kfd_backend.MainApplication - Started MainApplication in 19.521 seconds (process running for 20.83)
+2026-06-28 22:42:21 INFO  [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-28 22:42:26 WARN  [http-nio-8080-exec-5] o.s.d.w.c.SpringDataJackson3Configuration$PageModule$WarningLoggingModifier - Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2026-06-28 22:43:15 ERROR [task-1] c.k.a.k.audit.AuditLogService - Failed to write audit log entry: action=UPDATE, entity=DEPARTMENT, id=55555555-0001-4000-8000-000000000001, error=The request object has been recycled and is no longer associated with this facade

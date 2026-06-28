@@ -20,5 +20,6 @@ public class PostSummaryDTO {
     private String excerpt;
     private String featuredImageUrl;
     private String status;
+    private String categoryName;
     private OffsetDateTime publishedAt;
 }

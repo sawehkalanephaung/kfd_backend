@@ -18,8 +18,9 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
     
     @Query("SELECT p FROM Post p WHERE " +
            "(:search IS NULL OR :search = '' OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
-           "(:category IS NULL OR :category = '' OR p.category.name = :category)")
-    Page<Post> searchAdminPosts(@Param("search") String search, @Param("category") String category, Pageable pageable);
+           "(:category IS NULL OR :category = '' OR p.category.name = :category) AND " +
+           "(:statusEnum IS NULL OR p.status = :statusEnum)")
+    Page<Post> searchAdminPosts(@Param("search") String search, @Param("category") String category, @Param("statusEnum") PostStatus statusEnum, Pageable pageable);
 
     boolean existsBySlug(String slug);
 

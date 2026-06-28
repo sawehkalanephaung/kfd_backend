@@ -94,10 +94,18 @@ public class PostService {
     /**
      * Returns a paginated list of all posts (DRAFT, PUBLISHED, ARCHIVED)
      * for the admin dashboard, with optional filtering.
-     * Usage: GET /api/v1/admin/cms/posts?page=0&size=10&search=xyz&category=abc
+     * Usage: GET /api/v1/admin/cms/posts?page=0&size=10&search=xyz&category=abc&status=PUBLISHED
      */
-    public Page<PostResponseDto> getAllPosts(String search, String category, Pageable pageable) {
-        return postRepository.searchAdminPosts(search, category, pageable).map(this::toResponseDto);
+    public Page<PostResponseDto> getAllPosts(String search, String category, String statusStr, Pageable pageable) {
+        PostStatus statusEnum = null;
+        if (statusStr != null && !statusStr.isBlank()) {
+            try {
+                statusEnum = PostStatus.valueOf(statusStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid status for filtering
+            }
+        }
+        return postRepository.searchAdminPosts(search, category, statusEnum, pageable).map(this::toResponseDto);
     }
 
     public PostResponseDto getPostById(UUID id) {
