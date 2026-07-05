@@ -231,7 +231,7 @@ public class GlobalExceptionHandler {
         ApiErrorResponse body = new ApiErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(), // 500
                 "Internal Server Error",
-                "An unexpected error occurred. Please contact support.");
+                ex.getMessage() != null ? ex.getMessage() : "Unknown exception: " + ex.getClass().getName());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 }

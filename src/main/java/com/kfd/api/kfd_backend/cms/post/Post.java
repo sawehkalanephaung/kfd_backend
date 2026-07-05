@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -40,6 +42,10 @@ public class Post {
 
     @Column(name = "featured_image_url", length = 1024)
     private String featuredImageUrl;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "slider_image_ids", columnDefinition = "jsonb")
+    private java.util.List<UUID> sliderImageIds;
 
     // author_id — plain UUID; no @ManyToOne needed until User entity is created
     @Column(name = "author_id")

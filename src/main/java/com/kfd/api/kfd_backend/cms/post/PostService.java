@@ -4,12 +4,16 @@ import com.kfd.api.kfd_backend.audit.AuditHelper;
 import com.kfd.api.kfd_backend.cms.category.PostCategory;
 import com.kfd.api.kfd_backend.cms.category.PostCategoryDto;
 import com.kfd.api.kfd_backend.cms.category.PostCategoryRepository;
+import com.kfd.api.kfd_backend.department.Department;
+import com.kfd.api.kfd_backend.department.DepartmentRepository;
 import com.kfd.api.kfd_backend.cms.tag.Tag;
 import com.kfd.api.kfd_backend.cms.tag.TagDto;
 import com.kfd.api.kfd_backend.cms.tag.TagRepository;
+import com.kfd.api.kfd_backend.media.MediaAssetRepository;
+import com.kfd.api.kfd_backend.media.MediaAsset;
 import com.kfd.api.kfd_backend.global.exception.DuplicateResourceException;
 import com.kfd.api.kfd_backend.global.exception.ResourceNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +32,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostCategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final MediaAssetRepository mediaAssetRepository;
+    private final DepartmentRepository departmentRepository;
     private final AuditHelper auditHelper;
 
     // ── Mapper ────────────────────────────────────────────────
@@ -52,6 +58,14 @@ public class PostService {
                         .build())
                 .toList();
 
+        java.util.List<String> sliderImageUrls = new java.util.ArrayList<>();
+        if (post.getSliderImageIds() != null && !post.getSliderImageIds().isEmpty()) {
+            sliderImageUrls = mediaAssetRepository.findAllById(post.getSliderImageIds())
+                    .stream()
+                    .map(MediaAsset::getFileUrl)
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
         return PostResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -59,7 +73,10 @@ public class PostService {
                 .excerpt(post.getExcerpt())
                 .content(post.getContent())
                 .featuredImageUrl(post.getFeaturedImageUrl())
+                .sliderImageIds(post.getSliderImageIds())
+                .sliderImageUrls(sliderImageUrls)
                 .authorId(post.getAuthorId())
+                .departmentId(post.getDepartment() != null ? post.getDepartment().getId() : null)
                 .category(categoryDto)
                 .tags(tagDtos)
                 .status(post.getStatus())
@@ -89,6 +106,12 @@ public class PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
     }
 
+    private Department resolveDepartment(UUID departmentId) {
+        if (departmentId == null) return null;
+        return departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Department", "id", departmentId));
+    }
+
     // ── Public API ────────────────────────────────────────────
 
     /**
@@ -96,6 +119,7 @@ public class PostService {
      * for the admin dashboard, with optional filtering.
      * Usage: GET /api/v1/admin/cms/posts?page=0&size=10&search=xyz&category=abc&status=PUBLISHED
      */
+    @Transactional(readOnly = true)
     public Page<PostResponseDto> getAllPosts(String search, String category, String statusStr, Pageable pageable) {
         PostStatus statusEnum = null;
         if (statusStr != null && !statusStr.isBlank()) {
@@ -108,6 +132,7 @@ public class PostService {
         return postRepository.searchAdminPosts(search, category, statusEnum, pageable).map(this::toResponseDto);
     }
 
+    @Transactional(readOnly = true)
     public PostResponseDto getPostById(UUID id) {
         return toResponseDto(findOrThrow(id));
     }
@@ -126,8 +151,10 @@ public class PostService {
                 .excerpt(dto.getExcerpt())
                 .content(dto.getContent())
                 .featuredImageUrl(dto.getFeaturedImageUrl())
+                .sliderImageIds(dto.getSliderImageIds())
                 .authorId(currentUserId)
                 .category(resolveCategory(dto.getCategoryId()))
+                .department(resolveDepartment(dto.getDepartmentId()))
                 .tags(resolveTags(dto.getTagIds()))
                 .metadata(dto.getMetadata())
                 .status(dto.getStatus() != null ? dto.getStatus() : PostStatus.DRAFT)
@@ -154,7 +181,9 @@ public class PostService {
         post.setExcerpt(dto.getExcerpt());
         post.setContent(dto.getContent());
         post.setFeaturedImageUrl(dto.getFeaturedImageUrl());
+        post.setSliderImageIds(dto.getSliderImageIds());
         post.setCategory(resolveCategory(dto.getCategoryId()));
+        post.setDepartment(resolveDepartment(dto.getDepartmentId()));
         post.getTags().clear();
         post.getTags().addAll(resolveTags(dto.getTagIds()));
         if (dto.getMetadata() != null) post.setMetadata(dto.getMetadata());

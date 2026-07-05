@@ -27,7 +27,10 @@ public class PostResponseDto {
     private String excerpt;
     private String content;
     private String featuredImageUrl;
+    private List<UUID> sliderImageIds;
+    private List<String> sliderImageUrls;
     private UUID authorId;
+    private UUID departmentId;
     private PostCategoryDto category;
     private List<TagDto> tags;
     private PostStatus status;

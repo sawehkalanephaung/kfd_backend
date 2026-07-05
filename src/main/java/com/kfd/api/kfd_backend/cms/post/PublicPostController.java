@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class PublicPostController {
      * Returns paginated PUBLISHED posts, optionally filtered by categorySlug.
      */
     @GetMapping
+    @Transactional(readOnly = true)
     public ResponseEntity<ApiDataResponse<Page<PostResponseDto>>> getPublishedPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size,
@@ -50,6 +52,7 @@ public class PublicPostController {
      * Returns a single PUBLISHED post by slug.
      */
     @GetMapping("/{slug}")
+    @Transactional(readOnly = true)
     public ResponseEntity<ApiDataResponse<PostDetailDto>> getPostBySlug(@PathVariable String slug) {
         Post post = postRepository.findBySlugAndStatus(slug, PostStatus.PUBLISHED)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "slug", slug));

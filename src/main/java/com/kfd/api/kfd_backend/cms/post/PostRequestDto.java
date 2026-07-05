@@ -22,7 +22,9 @@ public class PostRequestDto {
     private String excerpt;
     private String content;
     private String featuredImageUrl;
+    private List<UUID> sliderImageIds;
     private UUID categoryId;
+    private UUID departmentId;
     private UUID lastUpdatedBy;
 
     private java.util.Map<String, Object> metadata;
