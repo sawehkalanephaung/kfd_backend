@@ -15,4 +15,6 @@ public class TagDto {
     private UUID id;
     private String name;
     private String slug;
+    @com.fasterxml.jackson.annotation.JsonProperty("created_at")
+    private java.time.OffsetDateTime createdAt;
 }

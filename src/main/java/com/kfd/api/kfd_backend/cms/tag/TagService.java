@@ -23,6 +23,7 @@ public class TagService {
                 .id(tag.getId())
                 .name(tag.getName())
                 .slug(tag.getSlug())
+                .createdAt(tag.getCreatedAt())
                 .build();
     }
 

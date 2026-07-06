@@ -16,4 +16,6 @@ public class PostCategoryDto {
     private String name;
     private String slug;
     private String description;
+    @com.fasterxml.jackson.annotation.JsonProperty("created_at")
+    private java.time.OffsetDateTime createdAt;
 }

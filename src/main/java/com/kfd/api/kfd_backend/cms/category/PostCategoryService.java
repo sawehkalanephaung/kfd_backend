@@ -26,6 +26,7 @@ public class PostCategoryService {
                 .name(category.getName())
                 .slug(category.getSlug())
                 .description(category.getDescription())
+                .createdAt(category.getCreatedAt())
                 .build();
     }
 
