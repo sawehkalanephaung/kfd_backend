@@ -18,11 +18,11 @@ public class PublicPostCategoryController {
 
     /**
      * GET /api/v1/public/categories
-     * Returns all post categories for the news page filter bar.
+     * Returns only categories flagged as visible on the public news page filter bar.
      */
     @GetMapping
     public ResponseEntity<ApiDataResponse<List<PostCategoryDto>>> getAllCategories() {
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Categories retrieved successfully",
-                categoryService.getAllCategories()));
+                categoryService.getPublicCategories()));
     }
 }

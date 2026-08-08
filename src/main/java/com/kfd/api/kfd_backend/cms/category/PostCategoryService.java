@@ -26,6 +26,7 @@ public class PostCategoryService {
                 .name(category.getName())
                 .slug(category.getSlug())
                 .description(category.getDescription())
+                .showInPublic(category.isShowInPublic())
                 .createdAt(category.getCreatedAt())
                 .build();
     }
@@ -39,6 +40,14 @@ public class PostCategoryService {
 
     public List<PostCategoryDto> getAllCategories() {
         return categoryRepository.findAll()
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    /** Returns only categories that are flagged as visible on the public site. */
+    public List<PostCategoryDto> getPublicCategories() {
+        return categoryRepository.findAllByShowInPublicTrue()
                 .stream()
                 .map(this::toDto)
                 .toList();
@@ -58,6 +67,7 @@ public class PostCategoryService {
                         .name(dto.getName())
                         .slug(dto.getSlug())
                         .description(dto.getDescription())
+                        .showInPublic(dto.isShowInPublic())
                         .build()
         );
         return toDto(saved);
@@ -75,6 +85,7 @@ public class PostCategoryService {
         category.setName(dto.getName());
         category.setSlug(dto.getSlug());
         category.setDescription(dto.getDescription());
+        category.setShowInPublic(dto.isShowInPublic());
         return toDto(categoryRepository.save(category));
     }
 

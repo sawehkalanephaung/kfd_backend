@@ -8,4 +8,5 @@ import java.util.UUID;
 @Repository
 public interface PostCategoryRepository extends JpaRepository<PostCategory, UUID> {
     boolean existsBySlug(String slug);
+    java.util.List<PostCategory> findAllByShowInPublicTrue();
 }

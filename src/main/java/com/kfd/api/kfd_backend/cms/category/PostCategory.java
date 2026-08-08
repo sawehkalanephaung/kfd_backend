@@ -29,6 +29,10 @@ public class PostCategory {
     @Column(length = 1024)
     private String description;
 
+    @Column(name = "show_in_public", nullable = false)
+    @Builder.Default
+    private boolean showInPublic = true;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
