@@ -14,47 +14,38 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Admin team member endpoints — all routes require authentication.
+ * Secured at path level by SecurityConfig: /api/v1/admin/** requires authenticated().
+ * Fine-grained role checks enforced via @PreAuthorize.
+ */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/admin/team-members")
 @RequiredArgsConstructor
-public class TeamMemberController {
+public class AdminTeamMemberController {
 
     private final TeamMemberService teamMemberService;
     private final AuditLogService auditLogService;
     private final AuditHelper auditHelper;
 
-    // ─── Public Endpoints ─────────────────────────────────────────────────────
-
-    @GetMapping("/public/team-members")
-    public ResponseEntity<ApiDataResponse<List<TeamMemberDto>>> getActiveMembers() {
-        return ResponseEntity
-                .ok(new ApiDataResponse<>(200, "Team members retrieved", teamMemberService.getActiveMembers()));
-    }
-
-    /** Public profile page for a single KFD member — includes full bio. */
-    @GetMapping("/public/team-members/{id}")
-    public ResponseEntity<ApiDataResponse<TeamMemberDto>> getMemberPublic(@PathVariable UUID id) {
-        return ResponseEntity
-                .ok(new ApiDataResponse<>(200, "Team member retrieved", teamMemberService.getMemberById(id)));
-    }
-
-    // ─── Admin Endpoints ──────────────────────────────────────────────────────
-
-    @GetMapping("/admin/team-members")
+    /** GET /api/v1/admin/team-members — list all members including inactive */
+    @GetMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiDataResponse<List<TeamMemberDto>>> getAllMembers() {
-        return ResponseEntity
-                .ok(new ApiDataResponse<>(200, "All team members retrieved", teamMemberService.getAllMembers()));
+        return ResponseEntity.ok(
+                new ApiDataResponse<>(200, "All team members retrieved", teamMemberService.getAllMembers()));
     }
 
-    @GetMapping("/admin/team-members/{id}")
+    /** GET /api/v1/admin/team-members/{id} */
+    @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
     public ResponseEntity<ApiDataResponse<TeamMemberDto>> getMemberById(@PathVariable UUID id) {
-        return ResponseEntity
-                .ok(new ApiDataResponse<>(200, "Team member retrieved", teamMemberService.getMemberById(id)));
+        return ResponseEntity.ok(
+                new ApiDataResponse<>(200, "Team member retrieved", teamMemberService.getMemberById(id)));
     }
 
-    @PostMapping("/admin/team-members")
+    /** POST /api/v1/admin/team-members */
+    @PostMapping
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ApiDataResponse<TeamMemberDto>> createMember(
             @RequestBody TeamMemberDto dto,
@@ -66,7 +57,8 @@ public class TeamMemberController {
                 .body(new ApiDataResponse<>(201, "Team member created", created));
     }
 
-    @PutMapping("/admin/team-members/{id}")
+    /** PUT /api/v1/admin/team-members/{id} */
+    @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ApiDataResponse<TeamMemberDto>> updateMember(
             @PathVariable UUID id,
@@ -78,7 +70,8 @@ public class TeamMemberController {
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Team member updated", updated));
     }
 
-    @DeleteMapping("/admin/team-members/{id}")
+    /** DELETE /api/v1/admin/team-members/{id} */
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
     public ResponseEntity<ApiMessageResponse> deleteMember(
             @PathVariable UUID id,

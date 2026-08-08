@@ -22,24 +22,10 @@ import java.util.UUID;
 public class AdminMediaController {
 
         private final MediaAssetRepository mediaAssetRepository;
+        private final MediaService mediaService;
         private final StorageService storageService;
         private final AuditLogService auditLogService;
         private final AuditHelper auditHelper;
-
-        private MediaResponseDTO toDto(MediaAsset asset) {
-                return MediaResponseDTO.builder()
-                                .id(asset.getId())
-                                .fileName(asset.getFileName())
-                                .fileUrl(asset.getFileUrl())
-                                .fileType(asset.getFileType())
-                                .fileSizeKb(asset.getFileSizeKb())
-                                .mediaCategory(asset.getMediaCategory())
-                                .language(asset.getLanguage())
-                                .departmentId(asset.getDepartmentId())
-                                .uploadedBy(asset.getUploadedBy())
-                                .createdAt(asset.getCreatedAt())
-                                .build();
-        }
 
         @PostMapping("/upload")
         public ResponseEntity<ApiDataResponse<MediaResponseDTO>> uploadFile(
@@ -68,7 +54,7 @@ public class AdminMediaController {
                 auditLogService.log(auditHelper.getCurrentUserId(), "UPLOAD", "MEDIA", savedAsset.getId(), request);
 
                 // 4. Return DTO
-                MediaResponseDTO dto = toDto(savedAsset);
+                MediaResponseDTO dto = mediaService.toDto(savedAsset);
                 return ResponseEntity.status(HttpStatus.CREATED).body(
                                 new ApiDataResponse<>(
                                                 HttpStatus.CREATED.value(),
@@ -81,7 +67,7 @@ public class AdminMediaController {
                         @RequestParam(required = false) String search,
                         @RequestParam(required = false) String category,
                         @org.springframework.data.web.PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
-                Page<MediaResponseDTO> page = mediaAssetRepository.searchMediaPublic(category, search, pageable).map(this::toDto);
+                Page<MediaResponseDTO> page = mediaAssetRepository.searchMediaPublic(category, search, pageable).map(mediaService::toDto);
                 return ResponseEntity.ok(page);
         }
 
@@ -93,7 +79,7 @@ public class AdminMediaController {
                                 new ApiDataResponse<>(
                                                 HttpStatus.OK.value(),
                                                 "Media retrieved successfully",
-                                                toDto(asset)));
+                                                mediaService.toDto(asset)));
         }
 
         @PutMapping("/{id}")
@@ -128,7 +114,7 @@ public class AdminMediaController {
                                 new ApiDataResponse<>(
                                                 HttpStatus.OK.value(),
                                                 "Media updated successfully",
-                                                toDto(updatedAsset)));
+                                                mediaService.toDto(updatedAsset)));
         }
 
         @DeleteMapping("/{id}")

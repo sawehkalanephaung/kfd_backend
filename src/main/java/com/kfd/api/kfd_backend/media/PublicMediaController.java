@@ -17,22 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PublicMediaController {
 
-    private final MediaAssetRepository mediaAssetRepository;
-
-    private MediaResponseDTO toDto(MediaAsset asset) {
-        return MediaResponseDTO.builder()
-                .id(asset.getId())
-                .fileName(asset.getFileName())
-                .fileUrl(asset.getFileUrl())
-                .fileType(asset.getFileType())
-                .fileSizeKb(asset.getFileSizeKb())
-                .mediaCategory(asset.getMediaCategory())
-                .language(asset.getLanguage())
-                .departmentId(asset.getDepartmentId())
-                .uploadedBy(asset.getUploadedBy())
-                .createdAt(asset.getCreatedAt())
-                .build();
-    }
+    private final MediaService mediaService;
 
     /**
      * GET /api/v1/public/media
@@ -46,30 +31,15 @@ public class PublicMediaController {
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "newest") String sort) {
 
-        String safeCategory = category == null ? "" : category;
-        String safeSearch = search == null ? "" : search;
-        
-        Sort sortObj;
-        switch (sort.toLowerCase()) {
-            case "oldest":
-                sortObj = Sort.by(Sort.Direction.ASC, "createdAt");
-                break;
-            case "name_asc":
-                sortObj = Sort.by(Sort.Direction.ASC, "fileName");
-                break;
-            case "name_desc":
-                sortObj = Sort.by(Sort.Direction.DESC, "fileName");
-                break;
-            case "newest":
-            default:
-                sortObj = Sort.by(Sort.Direction.DESC, "createdAt");
-                break;
-        }
+        Sort sortObj = switch (sort.toLowerCase()) {
+            case "oldest"    -> Sort.by(Sort.Direction.ASC,  "createdAt");
+            case "name_asc"  -> Sort.by(Sort.Direction.ASC,  "fileName");
+            case "name_desc" -> Sort.by(Sort.Direction.DESC, "fileName");
+            default          -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
 
         Pageable pageable = PageRequest.of(page, size, sortObj);
-        Page<MediaAsset> assets = mediaAssetRepository.searchMediaPublic(safeCategory, safeSearch, pageable);
-        
-        Page<MediaResponseDTO> result = assets.map(this::toDto);
+        Page<MediaResponseDTO> result = mediaService.getPublicMedia(category, search, pageable);
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Media retrieved successfully", result));
     }
 
@@ -79,7 +49,7 @@ public class PublicMediaController {
      */
     @GetMapping("/categories")
     public ResponseEntity<ApiDataResponse<List<Map<String, Object>>>> getMediaCategories() {
-        List<Map<String, Object>> categories = mediaAssetRepository.countByCategory();
+        List<Map<String, Object>> categories = mediaService.getMediaCategories();
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Categories retrieved successfully", categories));
     }
 }
