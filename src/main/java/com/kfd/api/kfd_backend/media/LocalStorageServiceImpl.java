@@ -2,6 +2,7 @@ package com.kfd.api.kfd_backend.media;
 
 import com.kfd.api.kfd_backend.global.exception.StorageException;
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,17 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+/**
+ * Local filesystem storage implementation — active ONLY in the 'local' (dev) profile.
+ * 
+ * This service handles media uploads by saving them directly to the local disk in 
+ * an 'uploads' directory. It provides a simple environment for local development 
+ * without requiring AWS credentials or network requests.
+ * 
+ * In production environments (profile=prod), this bean is ignored and 
+ * {@code S3StorageServiceImpl} is injected as the {@code StorageService} instead.
+ */
+@Profile("local")
 @Service
 public class LocalStorageServiceImpl implements StorageService {
 

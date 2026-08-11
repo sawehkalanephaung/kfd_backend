@@ -14,11 +14,25 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Core security configuration for the application.
+ * Defines the beans required for authentication, including the UserDetailsService,
+ * AuthenticationProvider, AuthenticationManager, and PasswordEncoder.
+ */
 @Configuration
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
 
+    /**
+     * Constructs the ApplicationConfig with the necessary repositories.
+     * 
+     * @param userRepository The repository used to fetch user details during authentication.
+     *                       Note: We inject this with {@code @Lazy} to prevent an eager-initialization 
+     *                       cycle. Without it, Spring Security attempts to initialize the EntityManagerFactory 
+     *                       too early, causing Hibernate schema validation to run before Flyway migrations 
+     *                       can execute (which crashes the app on an empty database).
+     */
     public ApplicationConfig(@Lazy UserRepository userRepository) {
         this.userRepository = userRepository;
     }
