@@ -17,13 +17,13 @@ public class AdminNewsletterController {
     private final NewsletterSubscriptionService service;
 
     @GetMapping("/subscribers")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<List<NewsletterSubscriberResponseDTO>> getAllSubscribers() {
         return ResponseEntity.ok(service.getAllSubscribers());
     }
 
     @DeleteMapping("/subscribers/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteSubscriber(@PathVariable UUID id) {
         service.deleteSubscriber(id);
         return ResponseEntity.ok(new ApiMessageResponse(200, "Newsletter subscriber deleted successfully."));

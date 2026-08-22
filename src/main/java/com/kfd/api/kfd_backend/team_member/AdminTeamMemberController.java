@@ -30,7 +30,7 @@ public class AdminTeamMemberController {
 
     /** GET /api/v1/admin/team-members — list all members including inactive */
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<List<TeamMemberDto>>> getAllMembers() {
         return ResponseEntity.ok(
                 new ApiDataResponse<>(200, "All team members retrieved", teamMemberService.getAllMembers()));
@@ -38,7 +38,7 @@ public class AdminTeamMemberController {
 
     /** GET /api/v1/admin/team-members/{id} */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<TeamMemberDto>> getMemberById(@PathVariable UUID id) {
         return ResponseEntity.ok(
                 new ApiDataResponse<>(200, "Team member retrieved", teamMemberService.getMemberById(id)));
@@ -46,7 +46,7 @@ public class AdminTeamMemberController {
 
     /** POST /api/v1/admin/team-members */
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<TeamMemberDto>> createMember(
             @RequestBody TeamMemberDto dto,
             HttpServletRequest request) {
@@ -59,7 +59,7 @@ public class AdminTeamMemberController {
 
     /** PUT /api/v1/admin/team-members/{id} */
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<TeamMemberDto>> updateMember(
             @PathVariable UUID id,
             @RequestBody TeamMemberDto dto,
@@ -72,7 +72,7 @@ public class AdminTeamMemberController {
 
     /** DELETE /api/v1/admin/team-members/{id} */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteMember(
             @PathVariable UUID id,
             HttpServletRequest request) {

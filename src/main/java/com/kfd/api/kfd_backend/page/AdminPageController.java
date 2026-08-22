@@ -24,19 +24,19 @@ public class AdminPageController {
     private final AuditHelper auditHelper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<org.springframework.data.domain.Page<PageResponseDTO>> getAll(Pageable pageable) {
         return ResponseEntity.ok(pageService.getAll(pageable));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<PageResponseDTO>> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Page retrieved", pageService.getById(id)));
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<PageResponseDTO>> create(
             @RequestBody PageRequestDTO dto,
             HttpServletRequest request) {
@@ -48,7 +48,7 @@ public class AdminPageController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<PageResponseDTO>> update(
             @PathVariable UUID id,
             @RequestBody PageRequestDTO dto,
@@ -60,7 +60,7 @@ public class AdminPageController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> delete(
             @PathVariable UUID id,
             HttpServletRequest request) {

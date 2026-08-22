@@ -15,7 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/admin/metrics")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+@PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
 public class AdminGlobalMetricController {
 
     private final GlobalMetricService globalMetricService;
