@@ -1,5 +1,6 @@
 package com.kfd.api.kfd_backend.audit;
 
+import com.kfd.api.kfd_backend.global.web.ClientIpResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,13 +91,7 @@ public class AuditLogService {
      * Extracts the real client IP, respecting common reverse-proxy headers.
      */
     private String extractIp(HttpServletRequest request) {
-        if (request == null) return null;
-        String forwardedFor = request.getHeader("X-Forwarded-For");
-        if (forwardedFor != null && !forwardedFor.isBlank()) {
-            // X-Forwarded-For can be a comma-separated list; the first IP is the original client.
-            return forwardedFor.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
+        return ClientIpResolver.resolve(request);
     }
 
     private String extractUserAgent(HttpServletRequest request) {
