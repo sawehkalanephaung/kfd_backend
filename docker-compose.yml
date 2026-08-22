@@ -31,6 +31,9 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY}
       EMAIL_TO: ${EMAIL_TO}
       APP_MAIL_RECIPIENT: ${EMAIL_TO}
+      # ─── JWT ───
+      # Optional locally (an ephemeral key is generated); required in production.
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-}
     depends_on:
       db:
         condition: service_healthy
