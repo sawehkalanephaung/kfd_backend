@@ -61,10 +61,33 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
+    @Transient
+    private static final com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (role == null) return List.of();
-        return List.of(new SimpleGrantedAuthority(role.getName()));
+        
+        List<GrantedAuthority> authorities = new java.util.ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(role.getName()));
+        
+        if (role.getPermissions() != null && !role.getPermissions().isBlank()) {
+            try {
+                java.util.Map<String, Boolean> perms = mapper.readValue(
+                        role.getPermissions(),
+                        new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Boolean>>() {}
+                );
+                for (java.util.Map.Entry<String, Boolean> entry : perms.entrySet()) {
+                    if (Boolean.TRUE.equals(entry.getValue())) {
+                        authorities.add(new SimpleGrantedAuthority(entry.getKey()));
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore parse errors, just return the role name
+            }
+        }
+        
+        return authorities;
     }
 
     @Override

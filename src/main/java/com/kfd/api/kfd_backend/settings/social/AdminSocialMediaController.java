@@ -24,13 +24,13 @@ public class AdminSocialMediaController {
     private final AuditHelper auditHelper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<List<SocialMediaLinkResponseDTO>> getAllLinks() {
         return ResponseEntity.ok(service.getAllLinks());
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<SocialMediaLinkResponseDTO> createLink(
             @Valid @RequestBody SocialMediaLinkRequestDTO dto,
             HttpServletRequest request) {
@@ -40,7 +40,7 @@ public class AdminSocialMediaController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<SocialMediaLinkResponseDTO> updateLink(
             @PathVariable UUID id,
             @Valid @RequestBody SocialMediaLinkRequestDTO dto,
@@ -51,7 +51,7 @@ public class AdminSocialMediaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteLink(
             @PathVariable UUID id,
             HttpServletRequest request) {

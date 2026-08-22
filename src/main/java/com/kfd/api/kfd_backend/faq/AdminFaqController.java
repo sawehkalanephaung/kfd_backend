@@ -30,7 +30,7 @@ public class AdminFaqController {
 
     /** GET /api/v1/admin/faqs — fetch all FAQs including drafts */
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<List<Faq>>> getAllFaqs() {
         return ResponseEntity.ok(
                 new ApiDataResponse<>(200, "FAQs retrieved successfully", faqService.getAllFaqs()));
@@ -38,7 +38,7 @@ public class AdminFaqController {
 
     /** GET /api/v1/admin/faqs/{id} */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<Faq>> getFaqById(@PathVariable UUID id) {
         return ResponseEntity.ok(
                 new ApiDataResponse<>(200, "FAQ retrieved successfully", faqService.getFaqById(id)));
@@ -46,7 +46,7 @@ public class AdminFaqController {
 
     /** POST /api/v1/admin/faqs */
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<Faq>> createFaq(
             @RequestBody FaqDto dto,
             HttpServletRequest request) {
@@ -60,7 +60,7 @@ public class AdminFaqController {
 
     /** PUT /api/v1/admin/faqs/{id} */
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<Faq>> updateFaq(
             @PathVariable UUID id,
             @RequestBody FaqDto dto,
@@ -75,7 +75,7 @@ public class AdminFaqController {
 
     /** DELETE /api/v1/admin/faqs/{id} */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteFaq(
             @PathVariable UUID id,
             HttpServletRequest request) {

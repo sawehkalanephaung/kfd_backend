@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/admin/cms/categories")
 @RequiredArgsConstructor
+@PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
 public class PostCategoryController {
 
     private final PostCategoryService categoryService;
