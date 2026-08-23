@@ -46,7 +46,7 @@ public class SiteIdentityService {
                 .findFirst()
                 .map(SiteIdentityResponseDTO::from)
                 .orElseGet(() -> new SiteIdentityResponseDTO(
-                        null, DEFAULT_ORGANIZATION_NAME, null, null, null));
+                        null, DEFAULT_ORGANIZATION_NAME, null, null, null, null));
     }
 
     @Transactional(readOnly = true)
@@ -60,6 +60,7 @@ public class SiteIdentityService {
     public SiteIdentityResponseDTO create(SiteIdentityRequestDTO dto) {
         SiteIdentity entity = SiteIdentity.builder()
                 .organizationName(dto.organizationName())
+                .organizationNameKaren(dto.organizationNameKaren())
                 .tagline(dto.tagline())
                 .logoUrl(dto.logoUrl())
                 .footerCopyright(dto.footerCopyright())
@@ -114,6 +115,7 @@ public class SiteIdentityService {
 
     private void applyChanges(SiteIdentity entity, SiteIdentityRequestDTO dto) {
         entity.setOrganizationName(dto.organizationName());
+        entity.setOrganizationNameKaren(dto.organizationNameKaren());
         entity.setTagline(dto.tagline());
         entity.setLogoUrl(dto.logoUrl());
         entity.setFooterCopyright(dto.footerCopyright());

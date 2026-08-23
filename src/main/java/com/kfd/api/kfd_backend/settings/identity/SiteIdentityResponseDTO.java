@@ -5,6 +5,7 @@ import java.util.UUID;
 public record SiteIdentityResponseDTO(
         UUID id,
         String organizationName,
+        String organizationNameKaren,
         String tagline,
         String logoUrl,
         String footerCopyright
@@ -13,6 +14,7 @@ public record SiteIdentityResponseDTO(
         return new SiteIdentityResponseDTO(
                 entity.getId(),
                 entity.getOrganizationName(),
+                entity.getOrganizationNameKaren(),
                 entity.getTagline(),
                 entity.getLogoUrl(),
                 entity.getFooterCopyright()

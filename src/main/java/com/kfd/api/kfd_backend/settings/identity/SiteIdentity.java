@@ -31,6 +31,10 @@ public class SiteIdentity {
     @Column(name = "organization_name", nullable = false)
     private String organizationName;
 
+    /** S'gaw Karen name, shown beneath the English one in the header and footer. */
+    @Column(name = "organization_name_karen")
+    private String organizationNameKaren;
+
     @Column(name = "tagline")
     private String tagline;
 
