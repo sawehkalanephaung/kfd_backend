@@ -9,6 +9,9 @@ public record SiteIdentityRequestDTO(
         @Size(max = 255, message = "Organization name must be at most 255 characters.")
         String organizationName,
 
+        @Size(max = 255, message = "Karen organization name must be at most 255 characters.")
+        String organizationNameKaren,
+
         @Size(max = 255, message = "Tagline must be at most 255 characters.")
         String tagline,
 
