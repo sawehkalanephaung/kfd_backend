@@ -39,3 +39,11 @@ build/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# App Logs
+logs/
+*.log
+*.log.gz
+
+# Uploaded Media
+uploads/
