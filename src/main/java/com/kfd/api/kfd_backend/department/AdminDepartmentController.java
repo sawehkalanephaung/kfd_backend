@@ -26,20 +26,20 @@ public class AdminDepartmentController {
     private final AuditHelper auditHelper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<Page<DepartmentAdminResponseDTO>> getAll(Pageable pageable) {
         return ResponseEntity.ok(departmentService.getAllAdmin(pageable));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<DepartmentAdminResponseDTO>> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(
                 new ApiDataResponse<>(200, "Department retrieved successfully", departmentService.getByIdAdmin(id)));
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<DepartmentAdminResponseDTO>> create(
             @RequestBody DepartmentAdminRequestDTO dto,
             HttpServletRequest request) {
@@ -50,7 +50,7 @@ public class AdminDepartmentController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<DepartmentAdminResponseDTO>> update(
             @PathVariable UUID id,
             @RequestBody DepartmentAdminRequestDTO dto,
@@ -62,7 +62,7 @@ public class AdminDepartmentController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> delete(
             @PathVariable UUID id,
             HttpServletRequest request) {
@@ -75,13 +75,13 @@ public class AdminDepartmentController {
     // ─── Contact sub-resource ────────────────────────────────────────────────────
 
     @GetMapping("/{id}/contacts")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<List<DepartmentContactResponseDTO>>> getContacts(@PathVariable UUID id) {
         return ResponseEntity.ok(new ApiDataResponse<>(200, "Contacts retrieved", departmentService.getContacts(id)));
     }
 
     @PostMapping("/{id}/contacts")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<DepartmentContactResponseDTO>> addContact(
             @PathVariable UUID id,
             @RequestBody DepartmentContactRequestDTO dto,
@@ -93,7 +93,7 @@ public class AdminDepartmentController {
     }
 
     @PutMapping("/contacts/{contactId}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<DepartmentContactResponseDTO>> updateContact(
             @PathVariable UUID contactId,
             @RequestBody DepartmentContactRequestDTO dto,
@@ -104,7 +104,7 @@ public class AdminDepartmentController {
     }
 
     @DeleteMapping("/contacts/{contactId}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteContact(
             @PathVariable UUID contactId,
             HttpServletRequest request) {

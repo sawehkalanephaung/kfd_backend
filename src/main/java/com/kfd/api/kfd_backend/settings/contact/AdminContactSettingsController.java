@@ -24,19 +24,19 @@ public class AdminContactSettingsController {
     private final AuditHelper auditHelper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<List<ContactSettingsResponseDTO>> getAllSettings() {
         return ResponseEntity.ok(contactSettingsService.getAllSettings());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ContactSettingsResponseDTO> getSettingsById(@PathVariable UUID id) {
         return ResponseEntity.ok(contactSettingsService.getSettingsById(id));
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ContactSettingsResponseDTO> createSettings(
             @Valid @RequestBody ContactSettingsRequestDTO dto,
             HttpServletRequest request) {
@@ -46,7 +46,7 @@ public class AdminContactSettingsController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ContactSettingsResponseDTO> updateSettings(
             @PathVariable UUID id,
             @Valid @RequestBody ContactSettingsRequestDTO dto,
@@ -57,7 +57,7 @@ public class AdminContactSettingsController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_settings') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteSettings(
             @PathVariable UUID id,
             HttpServletRequest request) {

@@ -25,20 +25,20 @@ public class AdminUserController {
     private final AuditHelper auditHelper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<Page<UserResponseDTO>> getAllUsers(Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<UserResponseDTO>> getUserById(@PathVariable UUID id) {
         UserResponseDTO user = userService.getUserById(id);
         return ResponseEntity.ok(new ApiDataResponse<>(HttpStatus.OK.value(), "User retrieved successfully", user));
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<UserResponseDTO>> createUser(
             @RequestBody UserRequestDTO requestDTO,
             HttpServletRequest request) {
@@ -49,7 +49,7 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<UserResponseDTO>> updateUser(
             @PathVariable UUID id,
             @RequestBody UserRequestDTO requestDTO,
@@ -60,7 +60,7 @@ public class AdminUserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteUser(
             @PathVariable UUID id,
             HttpServletRequest request) {

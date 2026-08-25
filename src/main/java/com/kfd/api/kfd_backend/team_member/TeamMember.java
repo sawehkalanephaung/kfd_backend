@@ -7,6 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -58,4 +59,10 @@ public class TeamMember {
 
     @Column(name = "last_updated_by")
     private UUID lastUpdatedBy;
+
+    @Column(name = "term_start_date")
+    private LocalDate termStartDate;
+
+    @Column(name = "term_end_date")
+    private LocalDate termEndDate;
 }

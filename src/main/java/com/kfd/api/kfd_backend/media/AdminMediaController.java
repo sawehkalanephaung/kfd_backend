@@ -16,9 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/admin/media")
 @RequiredArgsConstructor
+@PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
 public class AdminMediaController {
 
         private final MediaAssetRepository mediaAssetRepository;

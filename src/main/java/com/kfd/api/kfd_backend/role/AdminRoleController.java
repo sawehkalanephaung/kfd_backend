@@ -24,21 +24,21 @@ public class AdminRoleController {
     private final AuditHelper auditHelper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<List<RoleResponseDTO>>> getAllRoles() {
         List<RoleResponseDTO> roles = roleService.getAllRoles();
         return ResponseEntity.ok(new ApiDataResponse<>(HttpStatus.OK.value(), "Roles retrieved successfully", roles));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_EDITOR')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<RoleResponseDTO>> getRoleById(@PathVariable UUID id) {
         RoleResponseDTO role = roleService.getRoleById(id);
         return ResponseEntity.ok(new ApiDataResponse<>(HttpStatus.OK.value(), "Role retrieved successfully", role));
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<RoleResponseDTO>> createRole(
             @RequestBody RoleRequestDTO requestDTO,
             HttpServletRequest request) {
@@ -49,7 +49,7 @@ public class AdminRoleController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiDataResponse<RoleResponseDTO>> updateRole(
             @PathVariable UUID id,
             @RequestBody RoleRequestDTO requestDTO,
@@ -61,7 +61,7 @@ public class AdminRoleController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('manage_users') or hasAuthority('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiMessageResponse> deleteRole(
             @PathVariable UUID id,
             HttpServletRequest request) {

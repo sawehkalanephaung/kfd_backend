@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/admin/audit-logs")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
+@PreAuthorize("hasAuthority('view_analytics') or hasAuthority('ROLE_SUPER_ADMIN')")
 public class AdminAuditLogController {
 
     private final AuditLogRepository auditLogRepository;

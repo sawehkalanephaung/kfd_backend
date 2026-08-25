@@ -1,4 +1,4 @@
-package com.kfd.api.kfd_backend.cms.category;
+package com.kfd.api.kfd_backend.cms.publicationcategory;
 
 import com.kfd.api.kfd_backend.global.exception.ApiDataResponse;
 import com.kfd.api.kfd_backend.global.exception.ApiMessageResponse;
@@ -13,30 +13,31 @@ import java.util.UUID;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
-@RequestMapping("/api/v1/admin/cms/categories")
+@RequestMapping("/api/v1/admin/cms/publication-categories")
 @RequiredArgsConstructor
 @PreAuthorize("hasAuthority('manage_content') or hasAuthority('ROLE_SUPER_ADMIN')")
-public class PostCategoryController {
+public class PublicationCategoryController {
 
-    private final PostCategoryService categoryService;
+    private final PublicationCategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<PostCategoryDto>> getAllCategories() {
+    public ResponseEntity<List<PublicationCategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
-    // Get category by id
+
     @GetMapping("/{id}")
-    public ResponseEntity<ApiDataResponse<PostCategoryDto>> getCategoryById(@PathVariable UUID id) {
-        PostCategoryDto category = categoryService.getCategoryById(id);
+    public ResponseEntity<ApiDataResponse<PublicationCategoryDto>> getCategoryById(@PathVariable UUID id) {
+        PublicationCategoryDto category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(
                 new ApiDataResponse<>(
                         HttpStatus.OK.value(),
                         "Category retrieved successfully",
                         category));
     }
+
     @PostMapping
-    public ResponseEntity<ApiDataResponse<PostCategoryDto>> createCategory(@RequestBody PostCategoryDto dto) {
-        PostCategoryDto created = categoryService.createCategory(dto);
+    public ResponseEntity<ApiDataResponse<PublicationCategoryDto>> createCategory(@RequestBody PublicationCategoryDto dto) {
+        PublicationCategoryDto created = categoryService.createCategory(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ApiDataResponse<>(
                         HttpStatus.CREATED.value(),
@@ -45,9 +46,9 @@ public class PostCategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiDataResponse<PostCategoryDto>> updateCategory(
-            @PathVariable UUID id, @RequestBody PostCategoryDto dto) {
-        PostCategoryDto updated = categoryService.updateCategory(id, dto);
+    public ResponseEntity<ApiDataResponse<PublicationCategoryDto>> updateCategory(
+            @PathVariable UUID id, @RequestBody PublicationCategoryDto dto) {
+        PublicationCategoryDto updated = categoryService.updateCategory(id, dto);
         return ResponseEntity.ok(
                 new ApiDataResponse<>(
                         HttpStatus.OK.value(),

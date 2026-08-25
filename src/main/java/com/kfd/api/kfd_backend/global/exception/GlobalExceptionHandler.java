@@ -57,6 +57,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles LastSuperAdminException → HTTP 409 Conflict
+     * Triggered when: deleting, deactivating, or demoting the last active Super Admin.
+     */
+    @ExceptionHandler(LastSuperAdminException.class)
+    public ResponseEntity<ApiErrorResponse> handleLastSuperAdmin(LastSuperAdminException ex) {
+        ApiErrorResponse body = new ApiErrorResponse(
+                HttpStatus.CONFLICT.value(), // 409
+                "Conflict",
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    /**
      * Handles invalid path variable types → HTTP 400 Bad Request
      * Triggered when: a non-UUID string is passed as a UUID path variable.
      * Example: GET /api/faqs/not-a-valid-uuid → 400

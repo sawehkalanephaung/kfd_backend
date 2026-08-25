@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -25,4 +26,7 @@ public class TeamMemberDto {
     
     @com.fasterxml.jackson.annotation.JsonProperty("isKfdChairman")
     private Boolean isKfdChairman;
+    
+    private LocalDate termStartDate;
+    private LocalDate termEndDate;
 }

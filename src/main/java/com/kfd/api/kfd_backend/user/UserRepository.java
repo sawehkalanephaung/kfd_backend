@@ -9,4 +9,10 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
+
+    /**
+     * Counts users who currently hold the given role AND are active.
+     * Used to enforce the "at least one active Super Admin must always exist" invariant.
+     */
+    long countByRoleNameAndIsActiveTrue(String roleName);
 }

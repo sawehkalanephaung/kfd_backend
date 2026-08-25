@@ -113,6 +113,13 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- Rate limiting for unauthenticated auth endpoints (in-memory token bucket) -->
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j_jdk17-core</artifactId>
+            <version>8.14.0</version>
+        </dependency>
+
         <!-- AWS SSM Parameter Store -->
         <dependency>
             <groupId>io.awspring.cloud</groupId>
