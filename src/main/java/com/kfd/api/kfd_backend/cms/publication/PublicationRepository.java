@@ -13,9 +13,13 @@ import java.util.UUID;
 @Repository
 public interface PublicationRepository extends JpaRepository<Publication, UUID> {
 
-    @Query("SELECT p FROM Publication p WHERE " +
+    /** Mirrors PostRepository.searchAdminPosts — see the note there on the
+     *  explicit LEFT JOIN and the slug-or-name match. */
+    @Query("SELECT p FROM Publication p LEFT JOIN p.category c WHERE " +
            "(:search IS NULL OR :search = '' OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
-           "(:category IS NULL OR :category = '' OR p.category.name = :category) AND " +
+           "(:category IS NULL OR :category = '' " +
+           "  OR LOWER(TRIM(c.slug)) = LOWER(TRIM(:category)) " +
+           "  OR LOWER(TRIM(c.name)) = LOWER(TRIM(:category))) AND " +
            "(:statusEnum IS NULL OR p.status = :statusEnum)")
     Page<Publication> searchAdminPublications(@Param("search") String search, @Param("category") String category, @Param("statusEnum") PublicationStatus statusEnum, Pageable pageable);
 

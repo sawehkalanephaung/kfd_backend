@@ -129,7 +129,14 @@ public class PostService {
                 // Ignore invalid status for filtering
             }
         }
-        return postRepository.searchAdminPosts(search, category, statusEnum, pageable).map(this::toResponseDto);
+        // A blank-but-not-empty value (e.g. "?category=%20") would otherwise slip
+        // past the query's `:category = ''` guard and then match no category at
+        // all, emptying the list instead of leaving it unfiltered.
+        String normalizedCategory = (category == null || category.isBlank()) ? null : category.trim();
+        String normalizedSearch = (search == null || search.isBlank()) ? null : search.trim();
+
+        return postRepository.searchAdminPosts(normalizedSearch, normalizedCategory, statusEnum, pageable)
+                .map(this::toResponseDto);
     }
 
     @Transactional(readOnly = true)

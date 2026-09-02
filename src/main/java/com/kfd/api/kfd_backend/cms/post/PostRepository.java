@@ -16,9 +16,20 @@ import org.springframework.data.repository.query.Param;
 public interface PostRepository extends JpaRepository<Post, UUID> {
     // findAll(Pageable) is provided by the JpaRepository base interface
     
-    @Query("SELECT p FROM Post p WHERE " +
+    /**
+     * The join is explicitly LEFT: the previous implicit `p.category.name` path
+     * compiled to an INNER JOIN, which silently dropped every uncategorised
+     * post from the unfiltered admin list.
+     *
+     * `:category` accepts either a category slug or its display name, matched
+     * case- and whitespace-insensitively, so a stored name like
+     * " General News & Articles" still resolves.
+     */
+    @Query("SELECT p FROM Post p LEFT JOIN p.category c WHERE " +
            "(:search IS NULL OR :search = '' OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
-           "(:category IS NULL OR :category = '' OR p.category.name = :category) AND " +
+           "(:category IS NULL OR :category = '' " +
+           "  OR LOWER(TRIM(c.slug)) = LOWER(TRIM(:category)) " +
+           "  OR LOWER(TRIM(c.name)) = LOWER(TRIM(:category))) AND " +
            "(:statusEnum IS NULL OR p.status = :statusEnum)")
     Page<Post> searchAdminPosts(@Param("search") String search, @Param("category") String category, @Param("statusEnum") PostStatus statusEnum, Pageable pageable);
 

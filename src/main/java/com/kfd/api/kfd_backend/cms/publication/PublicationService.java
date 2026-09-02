@@ -112,7 +112,13 @@ public class PublicationService {
                 // Ignore invalid status for filtering
             }
         }
-        return publicationRepository.searchAdminPublications(search, category, statusEnum, pageable).map(this::toResponseDto);
+        // See PostService.getAllPosts — a blank-but-not-empty filter value would
+        // otherwise empty the list instead of leaving it unfiltered.
+        String normalizedCategory = (category == null || category.isBlank()) ? null : category.trim();
+        String normalizedSearch = (search == null || search.isBlank()) ? null : search.trim();
+
+        return publicationRepository.searchAdminPublications(normalizedSearch, normalizedCategory, statusEnum, pageable)
+                .map(this::toResponseDto);
     }
 
     @Transactional(readOnly = true)
