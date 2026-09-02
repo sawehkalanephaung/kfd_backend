@@ -47,3 +47,4 @@ logs/
 
 # Uploaded Media
 uploads/
+SECRETS_AUDIT.md
