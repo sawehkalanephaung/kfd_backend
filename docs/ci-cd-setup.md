@@ -57,15 +57,26 @@ An IAM user with programmatic access and this policy.
 
 `elasticbeanstalk:CreateStorageLocation` is not needed — the workflow
 references the existing bucket directly (`EB_S3_BUCKET` in `ci-deploy.yml`)
-rather than resolving it via that call. That does **not** avoid needing
-`s3:CreateBucket`, though: `elasticbeanstalk:UpdateEnvironment` performs the
-same "ensure the artifact bucket exists" check itself, using the deploying
-user's own credentials — confirmed by the resulting `InsufficientPrivileges`
-error naming the deploy IAM user directly, not an EB service role. `s3:CreateBucket`
-is therefore granted, but scoped to only this bucket's exact ARN (not a
-wildcard), which is idempotent against a bucket this account already owns and
-grants no ability to delete it, alter its policy, or create any other bucket —
-verified with `simulate-principal-policy`.
+rather than resolving it via that call.
+
+`elasticbeanstalk:UpdateEnvironment` performs its own "ensure the artifact
+bucket is correctly configured" reconciliation on every deploy, using the
+deploying user's own credentials rather than an EB service role — confirmed by
+`InsufficientPrivileges` errors naming the deploy IAM user directly. This
+surfaced incrementally across the first real deploys: `s3:CreateBucket` first,
+then `s3:PutBucketOwnershipControls`. There is no AWS-documented exhaustive
+list of what this reconciliation may call (observed elsewhere: bucket policy,
+lifecycle, public-access-block, versioning, encryption), and manual deploys
+never hit this because a personal AWS user with broad permissions silently
+covers all of it.
+
+Rather than discovering the rest one failed deploy at a time, the policy grants
+`s3:*` — but scoped to only this one bucket's ARN, nothing account-wide, no
+other bucket reachable. Verified with `simulate-principal-policy`: every
+bucket-config action tried so far (and several not yet seen) is allowed on this
+bucket, the same actions are denied against a different bucket name, and EB
+actions remain limited to the five listed here — no `TerminateEnvironment`, no
+IAM, no EC2.
 
 ```json
 {
@@ -84,18 +95,12 @@ verified with `simulate-principal-policy`.
       "Resource": "*"
     },
     {
-      "Sid": "EnsureArtifactBucket",
+      "Sid": "ArtifactBucketFull",
       "Effect": "Allow",
-      "Action": ["s3:CreateBucket"],
-      "Resource": "arn:aws:s3:::elasticbeanstalk-ap-southeast-1-119306256305"
-    },
-    {
-      "Sid": "UploadArtifact",
-      "Effect": "Allow",
-      "Action": ["s3:PutObject", "s3:GetObject", "s3:ListBucket"],
+      "Action": "s3:*",
       "Resource": [
-        "arn:aws:s3:::elasticbeanstalk-ap-southeast-1-*",
-        "arn:aws:s3:::elasticbeanstalk-ap-southeast-1-*/*"
+        "arn:aws:s3:::elasticbeanstalk-ap-southeast-1-119306256305",
+        "arn:aws:s3:::elasticbeanstalk-ap-southeast-1-119306256305/*"
       ]
     }
   ]
