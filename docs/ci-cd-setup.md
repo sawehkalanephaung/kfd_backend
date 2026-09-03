@@ -53,7 +53,12 @@ database password, the JWT key, or anything else the app runs on.
 
 ### 3. Create the deploy IAM user
 
-An IAM user with programmatic access and this policy:
+An IAM user with programmatic access and this policy. `elasticbeanstalk:CreateStorageLocation`
+is deliberately **not** granted — that call attempts `s3:CreateBucket` even when
+the bucket already exists, and IAM evaluates the attempted action regardless of
+whether it turns out to be a no-op. The workflow references the existing bucket
+directly instead (`EB_S3_BUCKET` in `ci-deploy.yml`), so this narrower policy is
+sufficient:
 
 ```json
 {
@@ -67,8 +72,7 @@ An IAM user with programmatic access and this policy:
         "elasticbeanstalk:UpdateEnvironment",
         "elasticbeanstalk:DescribeEnvironments",
         "elasticbeanstalk:DescribeApplicationVersions",
-        "elasticbeanstalk:DescribeEvents",
-        "elasticbeanstalk:CreateStorageLocation"
+        "elasticbeanstalk:DescribeEvents"
       ],
       "Resource": "*"
     },

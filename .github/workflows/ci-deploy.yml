@@ -24,6 +24,17 @@ env:
   EB_APPLICATION: kfd-backend
   EB_ENVIRONMENT: kfd-backend-prod
   HEALTH_PATH: /api/v1/public/health
+  # EB's per-region, per-account artifact bucket. Elastic Beanstalk creates this
+  # automatically the first time anyone runs `eb deploy` or calls
+  # CreateStorageLocation in this account/region, and it does not change —
+  # confirmed present as elasticbeanstalk-ap-southeast-1-119306256305. Referenced
+  # directly rather than resolved by calling CreateStorageLocation, because that
+  # call attempts s3:CreateBucket even when the bucket already exists, which
+  # the deploy IAM user is deliberately not granted (least privilege). If this
+  # ever needs to move to a different account or region, create the bucket with
+  # `aws elasticbeanstalk create-storage-location` under a broader identity once
+  # and update this value.
+  EB_S3_BUCKET: elasticbeanstalk-ap-southeast-1-119306256305
 
 permissions:
   contents: read
@@ -130,17 +141,14 @@ jobs:
           VERSION="gh-${{ github.run_number }}-$(echo "${{ github.sha }}" | cut -c1-7)"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-          # Idempotent: returns the existing EB-managed bucket for this region.
-          BUCKET=$(aws elasticbeanstalk create-storage-location \
-            --query S3Bucket --output text)
           KEY="${EB_APPLICATION}/${VERSION}.jar"
 
-          aws s3 cp "$JAR" "s3://${BUCKET}/${KEY}"
+          aws s3 cp "$JAR" "s3://${EB_S3_BUCKET}/${KEY}"
 
           aws elasticbeanstalk create-application-version \
             --application-name "$EB_APPLICATION" \
             --version-label "$VERSION" \
-            --source-bundle "S3Bucket=${BUCKET},S3Key=${KEY}" \
+            --source-bundle "S3Bucket=${EB_S3_BUCKET},S3Key=${KEY}" \
             --description "$(printf '%s' "${COMMIT_MESSAGE:-manual dispatch}" | tr '\n' ' ' | cut -c1-190)" \
             --no-auto-create-application
 
