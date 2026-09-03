@@ -53,12 +53,19 @@ database password, the JWT key, or anything else the app runs on.
 
 ### 3. Create the deploy IAM user
 
-An IAM user with programmatic access and this policy. `elasticbeanstalk:CreateStorageLocation`
-is deliberately **not** granted — that call attempts `s3:CreateBucket` even when
-the bucket already exists, and IAM evaluates the attempted action regardless of
-whether it turns out to be a no-op. The workflow references the existing bucket
-directly instead (`EB_S3_BUCKET` in `ci-deploy.yml`), so this narrower policy is
-sufficient:
+An IAM user with programmatic access and this policy.
+
+`elasticbeanstalk:CreateStorageLocation` is not needed — the workflow
+references the existing bucket directly (`EB_S3_BUCKET` in `ci-deploy.yml`)
+rather than resolving it via that call. That does **not** avoid needing
+`s3:CreateBucket`, though: `elasticbeanstalk:UpdateEnvironment` performs the
+same "ensure the artifact bucket exists" check itself, using the deploying
+user's own credentials — confirmed by the resulting `InsufficientPrivileges`
+error naming the deploy IAM user directly, not an EB service role. `s3:CreateBucket`
+is therefore granted, but scoped to only this bucket's exact ARN (not a
+wildcard), which is idempotent against a bucket this account already owns and
+grants no ability to delete it, alter its policy, or create any other bucket —
+verified with `simulate-principal-policy`.
 
 ```json
 {
@@ -75,6 +82,12 @@ sufficient:
         "elasticbeanstalk:DescribeEvents"
       ],
       "Resource": "*"
+    },
+    {
+      "Sid": "EnsureArtifactBucket",
+      "Effect": "Allow",
+      "Action": ["s3:CreateBucket"],
+      "Resource": "arn:aws:s3:::elasticbeanstalk-ap-southeast-1-119306256305"
     },
     {
       "Sid": "UploadArtifact",

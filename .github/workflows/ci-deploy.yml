@@ -28,10 +28,13 @@ env:
   # automatically the first time anyone runs `eb deploy` or calls
   # CreateStorageLocation in this account/region, and it does not change —
   # confirmed present as elasticbeanstalk-ap-southeast-1-119306256305. Referenced
-  # directly rather than resolved by calling CreateStorageLocation, because that
-  # call attempts s3:CreateBucket even when the bucket already exists, which
-  # the deploy IAM user is deliberately not granted (least privilege). If this
-  # ever needs to move to a different account or region, create the bucket with
+  # directly rather than resolved by calling CreateStorageLocation, to avoid an
+  # extra API call — not to avoid s3:CreateBucket: UpdateEnvironment performs the
+  # same "ensure the bucket exists" check itself, using the caller's own
+  # credentials, so the deploy IAM user needs s3:CreateBucket regardless (see
+  # docs/ci-cd-setup.md — scoped to only this bucket ARN, which is idempotent
+  # against a bucket the account already owns). If this ever needs to move to a
+  # different account or region, create the bucket with
   # `aws elasticbeanstalk create-storage-location` under a broader identity once
   # and update this value.
   EB_S3_BUCKET: elasticbeanstalk-ap-southeast-1-119306256305
