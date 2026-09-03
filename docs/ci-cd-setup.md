@@ -102,15 +102,84 @@ IAM, no EC2.
         "arn:aws:s3:::elasticbeanstalk-ap-southeast-1-119306256305",
         "arn:aws:s3:::elasticbeanstalk-ap-southeast-1-119306256305/*"
       ]
+    },
+    {
+      "Sid": "EnvironmentStackUpdateOnly",
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:DescribeStacks",
+        "cloudformation:DescribeStackEvents",
+        "cloudformation:DescribeStackResource",
+        "cloudformation:DescribeStackResources",
+        "cloudformation:GetTemplate",
+        "cloudformation:GetTemplateSummary",
+        "cloudformation:ListStackResources",
+        "cloudformation:CancelUpdateStack",
+        "cloudformation:ContinueUpdateRollback",
+        "cloudformation:UpdateStack",
+        "cloudformation:SignalResource",
+        "cloudformation:TagResource",
+        "cloudformation:UntagResource"
+      ],
+      "Resource": "arn:aws:cloudformation:ap-southeast-1:119306256305:stack/awseb-e-bi27bs7daa-stack/*"
+    },
+    {
+      "Sid": "EbAdjacentReadOnlyBaseline",
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:Describe*",
+        "elasticloadbalancing:Describe*",
+        "ec2:Describe*",
+        "logs:Describe*",
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:GetMetricStatistics",
+        "cloudwatch:ListMetrics",
+        "acm:Describe*",
+        "acm:List*"
+      ],
+      "Resource": "*"
     }
   ]
 }
 ```
 
-If `update-environment` is rejected, the environment likely needs additional
-permissions to touch its own CloudFormation/AutoScaling resources. The AWS
-managed policy `AdministratorAccess-AWSElasticBeanstalk` is the documented
-fallback — broader, but scoped to Elastic Beanstalk.
+`update-environment` turned out to need a second AWS service: EB environments
+are implemented as CloudFormation stacks, and `UpdateEnvironment` reads/updates
+that stack using the *deploying user's own credentials* — the failure named
+`cloudformation:GetTemplate`, then would very likely have continued into
+`DescribeStacks`/`UpdateStack` next, the same discover-one-at-a-time pattern the
+S3 permissions went through.
+
+The AWS managed policy `AdministratorAccess-AWSElasticBeanstalk` was considered
+and rejected once its actual contents were inspected: alongside the
+CloudFormation/EC2/ELB access this deploy genuinely needs, it also grants
+`elasticbeanstalk:*` (which would restore the ability to call
+`TerminateEnvironment` — the opposite of this policy's point),
+`iam:PassRole`/`iam:CreateRole`/`iam:CreateServiceLinkedRole`, `ec2:RunInstances`
+on `Resource: "*"`, and RDS/ECS/DynamoDB/SQS/SNS/CodeBuild create-and-delete —
+none of which this workflow needs, since it only ever updates one
+already-existing environment and never provisions new infrastructure.
+
+Instead: CloudFormation update/read actions scoped to only this environment's
+one stack ARN (no `CreateStack`/`DeleteStack` — this workflow never creates or
+destroys an environment), plus the narrow read-only baseline
+(`Describe*`/`List*`/`Get*` — no mutating verbs) that AWS's own policy grants at
+`Resource: "*"` for EC2/AutoScaling/ELB/CloudWatch/ACM, because those services'
+Describe/List APIs generally do not support resource-level ARN scoping at all —
+this is the closest available approximation, not a deliberate widening.
+Verified with `simulate-principal-policy`: the failing action is now allowed
+only on this stack (denied against any other stack ARN), `CreateStack`/
+`DeleteStack` remain denied even on this stack, the EC2/AutoScaling grants
+permit `Describe*` but not `RunInstances`/`CreateSecurityGroup`/
+`CreateAutoScalingGroup`, and `TerminateEnvironment`/`PassRole`/`CreateRole`
+all remain denied.
+
+If a *third* AWS service surfaces a permission error, stop and reconsider
+rather than keep pattern-matching this approach — check whether Elastic
+Beanstalk's own AWS documentation names a complete list for programmatic
+`UpdateEnvironment` callers, since three services' worth of individually
+discovered permissions is a sign the trial-and-error approach has stopped
+paying for itself.
 
 **These are long-lived credentials.** Rotate them periodically. GitHub OIDC
 removes them entirely and is worth moving to later.
