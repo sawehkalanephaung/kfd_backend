@@ -138,10 +138,33 @@ IAM, no EC2.
         "acm:List*"
       ],
       "Resource": "*"
+    },
+    {
+      "Sid": "EnvironmentAsgDeployControl",
+      "Effect": "Allow",
+      "Action": ["autoscaling:SuspendProcesses", "autoscaling:ResumeProcesses"],
+      "Resource": "arn:aws:autoscaling:ap-southeast-1:119306256305:autoScalingGroup:8aacc117-c6c2-47df-8200-883dc0a13fe5:autoScalingGroupName/awseb-e-bi27bs7daa-stack-AWSEBAutoScalingGroup-BPS1wPidcW4f"
     }
   ]
 }
 ```
+
+Run #5 got further than any before it — `Deploy and wait for the environment to
+stabilise` succeeded — but the final verification step (added specifically to
+catch exactly this) caught that the *live* version hadn't actually changed:
+`describe-events` showed `Failed to deploy application`, caused by
+`autoscaling:SuspendProcesses` — EB suspends the ASG's own scaling activity
+before applying a rolling update, and pauses on that step before ever touching
+the running instance. That is also why environment health stayed `Yellow`
+rather than `Red`: the deploy aborted before anything was actually changed.
+
+Not a third distinct service — AutoScaling was already present for the
+read-only baseline above — so this is a scoped addition, not a reason to step
+back per the note below. Added `SuspendProcesses` and its natural counterpart
+`ResumeProcesses`, scoped to only this environment's one Auto Scaling group
+ARN. Verified: allowed on this ASG, denied on any other; still cannot resize,
+reconfigure, or delete this ASG (`UpdateAutoScalingGroup`,
+`SetDesiredCapacity`, `DeleteAutoScalingGroup` all remain denied).
 
 `update-environment` turned out to need a second AWS service: EB environments
 are implemented as CloudFormation stacks, and `UpdateEnvironment` reads/updates
