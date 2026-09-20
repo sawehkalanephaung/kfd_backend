@@ -33,7 +33,7 @@ public class AdminMediaController {
         @PostMapping("/upload")
         public ResponseEntity<ApiDataResponse<MediaResponseDTO>> uploadFile(
                         @RequestParam("file") MultipartFile file,
-                        @RequestParam(value = "category", required = false, defaultValue = "general") String category,
+                        @RequestParam(value = "category", required = false) String category,
                         @RequestParam(value = "departmentId", required = false) UUID departmentId,
                         HttpServletRequest request) {
 
