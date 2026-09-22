@@ -17,11 +17,14 @@ public class ResendMailServiceImpl implements MailService {
 
     private final RestClient restClient;
     private final ContactSettingsService contactSettingsService;
+    private final String fromAddress;
 
     public ResendMailServiceImpl(
             @Value("${resend.api.key}") String apiKey,
+            @Value("${resend.from.address}") String fromAddress,
             ContactSettingsService contactSettingsService) {
         this.contactSettingsService = contactSettingsService;
+        this.fromAddress = fromAddress;
         this.restClient = RestClient.builder()
                 .baseUrl("https://api.resend.com")
                 .defaultHeader("Authorization", "Bearer " + apiKey)
@@ -33,7 +36,7 @@ public class ResendMailServiceImpl implements MailService {
         String recipientEmail = contactSettingsService.getDefaultSettings().contactEmail();
 
         ResendEmailRequest payload = new ResendEmailRequest(
-                "KFD Website <onboarding@resend.dev>",
+                "KFD Website <" + fromAddress + ">",
                 List.of(recipientEmail),
                 "[KFD Inquiry - " + request.inquiryType() + "] " + request.subject(),
                 buildInquiryHtmlBody(request),
@@ -45,7 +48,7 @@ public class ResendMailServiceImpl implements MailService {
     @Override
     public void sendPasswordResetEmail(String toEmail, String resetLink) {
         ResendEmailRequest payload = new ResendEmailRequest(
-                "KFD Admin <onboarding@resend.dev>",
+                "KFD Admin <" + fromAddress + ">",
                 List.of(toEmail),
                 "Reset Your KFD Admin Password",
                 buildPasswordResetHtmlBody(resetLink),
