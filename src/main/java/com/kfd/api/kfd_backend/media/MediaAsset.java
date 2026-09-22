@@ -55,4 +55,21 @@ public class MediaAsset {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
+
+    /**
+     * Collapses blank/whitespace-only category to null and trims real values,
+     * so "uncategorized" has exactly one representation regardless of which
+     * write path set it (upload leaves it null when omitted; the edit form
+     * always sends the field, blank or not). Centralizing this here — instead
+     * of each caller normalizing its own request param — means a future write
+     * path can't reintroduce the same null-vs-"" split by forgetting to.
+     */
+    @PrePersist
+    @PreUpdate
+    private void normalizeMediaCategory() {
+        if (mediaCategory != null) {
+            String trimmed = mediaCategory.trim();
+            mediaCategory = trimmed.isEmpty() ? null : trimmed;
+        }
+    }
 }
